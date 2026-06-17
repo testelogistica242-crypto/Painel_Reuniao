@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema Luft - Painel de Controle</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+.app-container { width: 100%; max-width: 1400px; background-color: #ffffff; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; display: flex; flex-direction: column; }
+.tela { padding: 40px 50px; display: none; animation: fadeIn 0.3s ease-in-out; flex: 1; overflow-y: auto; }
+.tela.ativa { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.tela-painel-fullscreen { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(135deg, #0a1628 0%, #1a3a5c 50%, #0d2137 100%); padding: 30px 40px; overflow-y: auto; overflow-x: hidden; z-index: 9999; }
+.tela-painel-fullscreen.ativa { display: block; }
+.painel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid rgba(127,179,213,0.3); }
+.relogio-container { width: 140px; height: 140px; border-radius: 50%; background: linear-gradient(145deg, #1e4d7b, #0f2d4a); box-shadow: 0 8px 30px rgba(0,0,0,0.5), inset 0 2px 10px rgba(255,255,255,0.1), inset 0 -5px 15px rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid rgba(255,255,255,0.15); flex-shrink: 0; }
+.relogio-data { color: #ffffff; font-size: 18px; font-weight: 700; text-align: center; line-height: 1.2; }
+.relogio-hora { color: #7fb3d5; font-size: 24px; font-weight: 800; text-align: center; margin-top: 5px; }
+.painel-titulo-principal { flex: 1; text-align: center; color: #ffffff; font-size: 32px; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.5); letter-spacing: 1px; margin: 0 20px; }
+.painel-botoes { display: flex; gap: 12px; flex-shrink: 0; }
+.btn-painel-acao { background: linear-gradient(145deg, rgba(231,76,60,0.9), rgba(192,57,43,0.9)); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 10px 20px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+.btn-painel-acao:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(231,76,60,0.5); }
+.btn-painel-acao.btn-fechar { background: linear-gradient(145deg, rgba(149,165,166,0.9), rgba(127,140,141,0.9)); }
+.btn-painel-acao.btn-fechar:hover { box-shadow: 0 6px 20px rgba(149,165,166,0.5); }
+.grid-cards-principal { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; margin-bottom: 22px; }
+.grid-cards-secundario { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 22px; }
+.card-moderno { background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05)); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 16px; padding: 18px 16px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1); transition: all 0.3s ease; min-height: 110px; display: flex; flex-direction: column; justify-content: space-between; }
+.card-moderno:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.25); }
+.card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.card-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.card-icon svg { width: 28px; height: 28px; stroke: #7fb3d5; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.card-titulo { color: #ffffff; font-size: 15px; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+.card-conteudo { display: flex; flex-direction: column; gap: 5px; padding-left: 12px; border-left: 2px solid rgba(127,179,213,0.4); }
+.card-linha { color: #d4e6f1; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+.card-linha strong { color: #ffffff; font-size: 18px; font-weight: 800; margin-left: 4px; }
+.tendencia-up { color: #2ecc71 !important; font-size: 16px; font-weight: 900; animation: pulseUp 1s ease-in-out; }
+.tendencia-down { color: #e74c3c !important; font-size: 16px; font-weight: 900; animation: pulseDown 1s ease-in-out; }
+.tendencia-neutral { color: #95a5a6 !important; font-size: 14px; }
+@keyframes pulseUp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes pulseDown { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+.card-secundario-detalhado { min-height: 140px; flex-direction: column; align-items: stretch; }
+.card-secundario-detalhado .card-header { margin-bottom: 10px; }
+.card-total-valor { color: #7fb3d5; font-size: 32px; font-weight: 800; text-align: right; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(127,179,213,0.3); }
+.card-detalhes-lista { display: flex; flex-direction: column; gap: 6px; max-height: 120px; overflow-y: auto; }
+.card-detalhe-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(255,255,255,0.08); border-radius: 8px; border-left: 3px solid #7fb3d5; }
+.card-detalhe-num { color: #ffffff; font-size: 16px; font-weight: 700; }
+.card-detalhe-texto { color: #d4e6f1; font-size: 14px; font-weight: 500; text-align: right; flex: 1; margin-left: 10px; }
+.card-sla-container { display: flex; justify-content: center; align-items: center; padding: 10px; }
+.sla-gauge-wrapper { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.sla-gauge-svg { width: 220px; height: 130px; }
+.sla-gauge-valor { font-size: 36px; font-weight: 800; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+.sla-gauge-label { font-size: 14px; color: #7fb3d5; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.sla-agulha { transition: transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1); transform-origin: 110px 110px; }
+.card-or-antiga { min-height: auto; }
+.card-or-antiga .card-conteudo { border-left: none; padding-left: 40px; }
+.card-or-antiga .card-linha-texto { font-size: 20px; color: #e74c3c; font-weight: 700; }
+.msg-vazia-painel { text-align: center; color: #7fb3d5; font-size: 24px; margin-top: 80px; font-weight: 600; }
+.secao-modulo-painel { margin-top: 30px; padding-top: 25px; border-top: 3px solid rgba(127,179,213,0.3); }
+.modulo-header-painel { display: flex; justify-content: center; align-items: center; margin-bottom: 20px; padding: 15px 20px; background: linear-gradient(135deg, rgba(230,126,34,0.2), rgba(211,84,0,0.1)); border-radius: 12px; border: 1px solid rgba(230,126,34,0.3); position: relative; }
+.modulo-header-painel.inventario-header { background: linear-gradient(135deg, rgba(39,174,96,0.2), rgba(34,153,84,0.1)); border-color: rgba(39,174,96,0.3); }
+.modulo-header-painel.expedicao-header { background: linear-gradient(135deg, rgba(41,128,185,0.25), rgba(26,82,118,0.15)); border-color: rgba(41,128,185,0.4); }
+.modulo-header-painel.qualidade-header { background: linear-gradient(135deg, rgba(142,68,173,0.25), rgba(108,52,131,0.15)); border-color: rgba(142,68,173,0.4); }
+.modulo-header-painel.faleconosco-header { background: linear-gradient(135deg, rgba(230,126,34,0.3), rgba(211,84,0,0.2)); border-color: rgba(230,126,34,0.5); }
+.modulo-header-painel.separacao-header { background: linear-gradient(135deg, rgba(22,160,133,0.25), rgba(26,188,156,0.15)); border-color: rgba(22,160,133,0.4); }
+.modulo-header-painel.corte-header { background: linear-gradient(135deg, rgba(230,126,34,0.25), rgba(211,84,0,0.15)); border-color: rgba(230,126,34,0.4); }
+.modulo-header-painel.absenteismo-header { background: linear-gradient(135deg, rgba(155,89,182,0.25), rgba(142,68,173,0.15)); border-color: rgba(155,89,182,0.4); }
+.modulo-titulo-painel { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+.modulo-titulo-painel.retrabalho-titulo { color: #e67e22; }
+.modulo-titulo-painel.inventario-titulo { color: #27ae60; }
+.modulo-titulo-painel.expedicao-titulo { color: #5dade2; }
+.modulo-titulo-painel.qualidade-titulo { color: #af7ac5; }
+.modulo-titulo-painel.faleconosco-titulo { color: #e67e22; }
+.modulo-titulo-painel.separacao-titulo { color: #16a085; }
+.modulo-titulo-painel.corte-titulo { color: #e67e22; }
+.modulo-titulo-painel.absenteismo-titulo { color: #9b59b6; }
+.modulo-data-painel { position: absolute; right: 20px; color: #d4e6f1; font-size: 14px; font-weight: 600; }
+.grid-cards-expedicao { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 22px; }
+.card-expedicao { background: linear-gradient(145deg, rgba(93,173,226,0.15), rgba(41,128,185,0.08)); backdrop-filter: blur(10px); border-radius: 16px; padding: 22px 18px; border: 1px solid rgba(93,173,226,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.25); text-align: center; transition: all 0.3s ease; position: relative; }
+.card-expedicao:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(93,173,226,0.3); }
+.card-expedicao-titulo { color: #85c1e9; font-size: 16px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+.card-expedicao-valor-container { display: flex; align-items: center; justify-content: center; gap: 10px; }
+.card-expedicao-valor { color: #ffffff; font-size: 42px; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.4); }
+.card-expedicao-tendencia { font-size: 24px; font-weight: 900; display: flex; align-items: center; }
+.tendencia-exp-up { color: #2ecc71 !important; animation: pulseUp 1s ease-in-out; }
+.tendencia-exp-down { color: #e74c3c !important; animation: pulseDown 1s ease-in-out; }
+.tendencia-exp-neutral { color: #95a5a6 !important; }
+.card-expedicao-destaque { background: linear-gradient(145deg, rgba(93,173,226,0.25), rgba(41,128,185,0.15)); border-color: rgba(93,173,226,0.5); }
+.card-expedicao-destaque .card-expedicao-valor { color: #5dade2; font-size: 48px; }
+.card-nota-antiga { background: linear-gradient(145deg, rgba(93,173,226,0.15), rgba(41,128,185,0.08)); backdrop-filter: blur(10px); border-radius: 16px; padding: 22px 18px; border: 1px solid rgba(93,173,226,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.25); margin-top: 18px; }
+.card-nota-antiga-header { color: #85c1e9; font-size: 16px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+.card-nota-antiga-conteudo { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.card-nota-item { text-align: center; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 10px; }
+.card-nota-item-label { color: #85c1e9; font-size: 13px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; }
+.card-nota-item-valor { color: #ffffff; font-size: 22px; font-weight: 800; }
+.tabela-modulo-painel { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+.tabela-modulo-painel thead th { background: linear-gradient(135deg, #1a5276, #2980b9); color: white; padding: 16px 20px; font-size: 18px; font-weight: 700; text-align: center; }
+.tabela-modulo-painel thead th:first-child { width: 35%; }
+.tabela-modulo-painel tbody td { padding: 14px 20px; color: #ffffff; font-size: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); text-align: center; }
+.tabela-modulo-painel tbody tr:nth-child(even) td { background: rgba(255,255,255,0.08); }
+.msg-vazia-modulo { text-align: center; color: #7fb3d5; font-size: 18px; padding: 30px; font-style: italic; }
+h1 { color: #2c3e50; text-align: center; font-size: 36px; font-weight: 800; margin-bottom: 40px; padding-bottom: 15px; border-bottom: 4px solid #3498db; }
+.grid-botoes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.btn-modulo { background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; border-radius: 16px; padding: 30px 15px; font-size: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(52,152,219,0.3); }
+.btn-modulo:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(52,152,219,0.5); }
+.btn-painel { background: linear-gradient(135deg, #27ae60, #229954); grid-column: span 4; box-shadow: 0 6px 20px rgba(39,174,96,0.3); }
+.btn-painel:hover { box-shadow: 0 10px 30px rgba(39,174,96,0.5); }
+.btn-macmillan { background: linear-gradient(135deg, #722F37, #5B2429); grid-column: span 1; box-shadow: 0 6px 20px rgba(114,47,55,0.3); }
+.btn-macmillan:hover { box-shadow: 0 10px 30px rgba(114,47,55,0.5); }
+.btn-corte { background: linear-gradient(135deg, #e67e22, #d35400); grid-column: span 2; box-shadow: 0 6px 20px rgba(230,126,34,0.3); }
+.btn-corte:hover { box-shadow: 0 10px 30px rgba(230,126,34,0.5); }
+.btn-absenteismo { background: linear-gradient(135deg, #9b59b6, #8e44ad); grid-column: span 2; box-shadow: 0 6px 20px rgba(155,89,182,0.3); }
+.btn-absenteismo:hover { box-shadow: 0 10px 30px rgba(155,89,182,0.5); }
+.btn-consultar { background: linear-gradient(135deg, #9b59b6, #8e44ad); grid-column: span 4; box-shadow: 0 6px 20px rgba(155,89,182,0.3); }
+.btn-consultar:hover { box-shadow: 0 10px 30px rgba(155,89,182,0.5); }
+.form-layout-pc { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
+.form-coluna-esquerda, .form-coluna-direita { display: flex; flex-direction: column; gap: 25px; }
+.tabela-form { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+.tabela-form thead th { background: linear-gradient(135deg, #1a5276, #2980b9); color: white; padding: 20px 15px; font-size: 18px; font-weight: 700; text-align: center; }
+.tabela-form tbody td { padding: 16px 15px; text-align: center; border-bottom: 1px solid #ecf0f1; background-color: #f8f9fa; }
+.tabela-form tbody tr:nth-child(even) td { background-color: #eef2f7; }
+.tabela-form tbody tr.linha-total td { background: linear-gradient(135deg, #d5e8f0, #aed6f1) !important; font-weight: 700; font-size: 17px; }
+.tabela-form tbody td:first-child { font-weight: 700; color: #2c3e50; font-size: 16px; text-align: left; padding-left: 20px; }
+.tabela-form input { width: 100%; padding: 16px 12px; border: 2px solid #bdc3c7; border-radius: 12px; font-size: 17px; text-align: center; background-color: white; transition: all 0.3s; font-weight: 600; }
+.tabela-form input:focus { border-color: #3498db; outline: none; background-color: #fffde7; box-shadow: 0 0 0 4px rgba(52,152,219,0.1); }
+.secao-antiga, .secao-linhas-dinamicas, .secao-sla, .secao-retrabalho, .secao-inventario, .secao-expedicao, .secao-qualidade, .secao-faleconosco, .secao-separacao, .secao-corte, .secao-absenteismo { border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px; }
+.secao-antiga h2, .secao-linhas-dinamicas h2, .secao-sla h2, .secao-retrabalho h2, .secao-inventario h2, .secao-expedicao h2, .secao-qualidade h2, .secao-faleconosco h2, .secao-separacao h2, .secao-corte h2, .secao-absenteismo h2 { background: linear-gradient(135deg, #1a5276, #2980b9); color: white; margin: 0; padding: 20px; text-align: center; font-size: 22px; font-weight: 700; }
+.secao-retrabalho h2 { background: linear-gradient(135deg, #d35400, #e67e22); }
+.secao-inventario h2 { background: linear-gradient(135deg, #1e8449, #27ae60); }
+.secao-expedicao h2 { background: linear-gradient(135deg, #1a5276, #2980b9); }
+.secao-qualidade h2 { background: linear-gradient(135deg, #6c3483, #8e44ad); }
+.secao-faleconosco h2 { background: linear-gradient(135deg, #d35400, #e67e22); }
+.secao-separacao h2 { background: linear-gradient(135deg, #16a085, #1abc9c); }
+.secao-corte h2 { background: linear-gradient(135deg, #e67e22, #d35400); }
+.secao-absenteismo h2 { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+.campos-antiga, .grupo-linhas, .sla-conteudo, .retrabalho-conteudo, .inventario-conteudo, .expedicao-conteudo, .qualidade-conteudo, .faleconosco-conteudo, .separacao-conteudo, .corte-conteudo, .absenteismo-conteudo { background-color: #f8f9fa; padding: 25px; }
+.lista-ors-antigas { display: flex; flex-direction: column; gap: 15px; margin-bottom: 15px; }
+.campo-or-container { position: relative; width: 100%; }
+.campo-or-container input { width: 100%; padding: 18px 50px 18px 20px; border: 2px solid #bdc3c7; border-radius: 12px; font-size: 17px; background-color: white; transition: all 0.3s; font-weight: 500; }
+.campo-or-container input:focus { border-color: #3498db; outline: none; background-color: #fffde7; box-shadow: 0 0 0 4px rgba(52,152,219,0.1); }
+.btn-remover-campo { position: absolute; top: 50%; right: 12px; transform: translateY(-50%); background-color: #e74c3c; color: white; border: none; border-radius: 50%; width: 34px; height: 34px; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.btn-remover-campo:hover { background-color: #c0392b; transform: translateY(-50%) scale(1.1); }
+.btn-adicionar-campo { background: linear-gradient(135deg, #27ae60, #229954); color: white; border: none; border-radius: 12px; padding: 18px; width: 100%; font-size: 18px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s; box-shadow: 0 4px 15px rgba(39,174,96,0.3); }
+.btn-adicionar-campo:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(39,174,96,0.5); }
+.sla-input-container { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+.sla-input-wrapper { position: relative; width: 100%; max-width: 300px; }
+.sla-input-wrapper input { width: 100%; padding: 20px 60px 20px 25px; border: 3px solid #bdc3c7; border-radius: 14px; font-size: 28px; font-weight: 700; text-align: center; background-color: white; transition: all 0.3s; }
+.sla-input-wrapper input:focus { border-color: #3498db; outline: none; background-color: #fffde7; box-shadow: 0 0 0 4px rgba(52,152,219,0.1); }
+.sla-input-suffix { position: absolute; right: 25px; top: 50%; transform: translateY(-50%); font-size: 28px; font-weight: 700; color: #7f8c8d; }
+.sla-legendas { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+.sla-legenda-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #2c3e50; font-weight: 600; }
+.sla-legenda-cor { width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.1); }
+.cor-vermelho { background-color: #e74c3c; }
+.cor-amarelo { background-color: #f1c40f; }
+.cor-verde { background-color: #27ae60; }
+.sla-preview-gauge { width: 180px; height: 100px; margin: 10px auto; }
+.tabela-retrabalho { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 15px; }
+.tabela-retrabalho thead th { background: linear-gradient(135deg, #1a5276, #2980b9); color: white; padding: 16px 20px; font-size: 18px; font-weight: 700; text-align: left; }
+.tabela-retrabalho thead th:first-child { width: 40%; }
+.tabela-retrabalho tbody td { padding: 12px 15px; background-color: #f8f9fa; border-bottom: 1px solid #ecf0f1; }
+.tabela-retrabalho tbody tr:nth-child(even) td { background-color: #eef2f7; }
+.tabela-retrabalho input { width: 100%; padding: 14px 12px; border: 2px solid #bdc3c7; border-radius: 10px; font-size: 16px; background-color: white; transition: all 0.3s; font-weight: 500; }
+.tabela-retrabalho input:focus { border-color: #e67e22; outline: none; background-color: #fffde7; box-shadow: 0 0 0 4px rgba(230,126,34,0.1); }
+.btn-add-linha-retrabalho { background: linear-gradient(135deg, #d35400, #e67e22); color: white; border: none; border-radius: 12px; width: 50px; height: 50px; font-size: 32px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; box-shadow: 0 4px 15px rgba(211,84,0,0.3); margin: 0 auto; }
+.btn-add-linha-retrabalho:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(211,84,0,0.5); }
+.btn-remover-linha-retrabalho { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; width: 36px; height: 36px; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; flex-shrink: 0; }
+.btn-remover-linha-retrabalho:hover { transform: scale(1.1); }
+.tabela-inventario { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 15px; }
+.tabela-inventario thead th { background: linear-gradient(135deg, #1a5276, #2980b9); color: white; padding: 16px 15px; font-size: 17px; font-weight: 700; text-align: center; }
+.tabela-inventario thead th:first-child { text-align: left; padding-left: 20px; width: 22%; }
+.tabela-inventario tbody td { padding: 12px 10px; background-color: #f8f9fa; border-bottom: 1px solid #ecf0f1; text-align: center; }
+.tabela-inventario tbody tr:nth-child(even) td { background-color: #eef2f7; }
+.tabela-inventario input { width: 100%; padding: 14px 12px; border: 2px solid #bdc3c7; border-radius: 10px; font-size: 16px; background-color: white; transition: all 0.3s; font-weight: 500; text-align: center; }
+.tabela-inventario input:focus { border-color: #27ae60; outline: none; background-color: #fffde7; box-shadow: 0 0 0 4px rgba(39,174,96,0.1); }
+.input-com-suffix { position: relative; width: 100%; }
+.input-com-suffix input { padding-right: 35px !important; }
+.input-suffix { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: 700; color: #7f8c8d; pointer-events: none; }
+.btn-add-linha-inventario { background: linear-gradient(135deg, #1e8449, #27ae60); color: white; border: none; border-radius: 12px; width: 50px; height: 50px; font-size: 32px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; box-shadow: 0 4px 15px rgba(39,174,96,0.3); margin: 0 auto; }
+.btn-add-linha-inventario:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(39,174,96,0.5); }
+.btn-remover-linha-inventario { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; width: 36px; height: 36px; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; flex-shrink: 0; }
+.btn-remover-linha-inventario:hover { transform: scale(1.1); }
+.paletes-container { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+.paletes-input-wrapper { width: 100%; max-width: 400px; }
+.paletes-input-wrapper input { width: 100%; padding: 18px 12px; border: 2px solid #bdc3c7; border-radius: 12px; font-size: 20px; font-weight: 700; text-align: center; background-color: white; transition: all 0.3s; }
+.paletes-input-wrapper input:focus { border-color: #8e44ad; outline: none; background-color: #fffde7; box-shadow: 0 0 0 4px rgba(142,68,173,0.1); }
+.linha-dinamica { display: flex; align-items: center; gap: 15px; margin-bottom: 18px; background-color: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.linha-label { font-weight: 700; color: #2c3e50; font-size: 16px; min-width: 110px; }
+.linha-input-num, .linha-input-text { flex: 1; padding: 16px 12px; border: 2px solid #bdc3c7; border-radius: 12px; font-size: 16px; text-align: center; background-color: white; transition: all 0.3s; font-weight: 600; }
+.linha-input-num:focus, .linha-input-text:focus { border-color: #3498db; outline: none; background-color: #fffde7; box-shadow: 0 0 0 4px rgba(52,152,219,0.1); }
+.btn-add-linha { background: linear-gradient(135deg, #1a5276, #2980b9); color: white; border: none; border-radius: 12px; width: 48px; height: 48px; font-size: 32px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.3s; box-shadow: 0 4px 15px rgba(26,82,118,0.3); }
+.btn-add-linha:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(26,82,118,0.5); }
+.btn-remover-linha { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 12px; width: 48px; height: 48px; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.3s; box-shadow: 0 4px 15px rgba(231,76,60,0.3); }
+.btn-remover-linha:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(231,76,60,0.5); }
+.botoes-acao { grid-column: span 2; display: flex; gap: 20px; margin-top: 10px; }
+.btn-salvar { flex: 1; background: linear-gradient(135deg, #27ae60, #229954); color: white; border: none; border-radius: 16px; padding: 22px; font-size: 22px; font-weight: 800; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 20px rgba(39,174,96,0.4); }
+.btn-salvar:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(39,174,96,0.6); }
+.btn-voltar { flex: 1; background: linear-gradient(135deg, #95a5a6, #7f8c8d); color: white; border: none; border-radius: 16px; padding: 22px; font-size: 22px; font-weight: 800; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 20px rgba(149,165,166,0.4); }
+.btn-voltar:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(149,165,166,0.6); }
+.tabela-pendencias-paletes { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 15px; }
+.tabela-pendencias-paletes thead th { background: linear-gradient(135deg, #1a5276, #2980b9); color: white; padding: 16px 20px; font-size: 18px; font-weight: 700; text-align: center; }
+.tabela-pendencias-paletes thead th:first-child { width: 50%; }
+.tabela-pendencias-paletes tbody td { padding: 12px 15px; background-color: #f8f9fa; border-bottom: 1px solid #ecf0f1; }
+.tabela-pendencias-paletes tbody tr:nth-child(even) td { background-color: #eef2f7; }
+.tabela-pendencias-paletes input { width: 100%; padding: 14px 12px; border: 2px solid #bdc3c7; border-radius: 10px; font-size: 16px; background-color: white; transition: all 0.3s; font-weight: 500; }
+.tabela-pendencias-paletes input:focus { border-color: #2980b9; outline: none; background-color: #fffde7; box-shadow: 0 0 0 4px rgba(41,128,185,0.1); }
+.btn-add-linha-pendencias { background: linear-gradient(135deg, #1a5276, #2980b9); color: white; border: none; border-radius: 12px; width: 50px; height: 50px; font-size: 32px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; box-shadow: 0 4px 15px rgba(26,82,118,0.3); margin: 0 auto; }
+.btn-add-linha-pendencias:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(26,82,118,0.5); }
+.btn-remover-linha-pendencias { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; width: 36px; height: 36px; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; flex-shrink: 0; }
+.btn-remover-linha-pendencias:hover { transform: scale(1.1); }
+.grid-cards-qualidade { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; margin-bottom: 22px; }
+.card-qualidade-item { background: linear-gradient(145deg, rgba(142,68,173,0.2), rgba(108,52,131,0.1)); backdrop-filter: blur(10px); border-radius: 16px; padding: 20px; border: 1px solid rgba(142,68,173,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.25); transition: all 0.3s ease; }
+.card-qualidade-item:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(142,68,173,0.3); }
+.card-qualidade-numero { color: #af7ac5; font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+.card-qualidade-assunto { color: #ffffff; font-size: 20px; font-weight: 700; line-height: 1.4; }
+.grid-cards-faleconosco { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 22px; }
+.card-fc-stat { background: linear-gradient(145deg, rgba(230,126,34,0.2), rgba(211,84,0,0.1)); backdrop-filter: blur(10px); border-radius: 16px; padding: 22px 18px; border: 1px solid rgba(230,126,34,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.25); text-align: center; transition: all 0.3s ease; }
+.card-fc-stat:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(230,126,34,0.3); }
+.card-fc-titulo { color: #e67e22; font-size: 15px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.card-fc-valor { color: #ffffff; font-size: 38px; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.4); }
+.card-fc-stat.destaque { background: linear-gradient(145deg, rgba(230,126,34,0.3), rgba(211,84,0,0.2)); border-color: rgba(230,126,34,0.5); }
+.card-fc-stat.destaque .card-fc-valor { color: #e67e22; font-size: 44px; }
+.grafico-container { background: linear-gradient(145deg, rgba(230,126,34,0.15), rgba(211,84,0,0.08)); backdrop-filter: blur(10px); border-radius: 16px; padding: 25px; border: 1px solid rgba(230,126,34,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.25); margin-top: 18px; }
+.grafico-titulo { color: #e67e22; font-size: 22px; font-weight: 800; margin-bottom: 20px; text-align: center; }
+.grafico-barras { display: flex; flex-direction: column; gap: 12px; }
+.barra-item { display: flex; align-items: center; gap: 15px; }
+.barra-label { min-width: 180px; color: #ffffff; font-size: 14px; font-weight: 600; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.barra-container { flex: 1; height: 32px; background: rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; position: relative; }
+.barra-fill { height: 100%; background: linear-gradient(90deg, #e67e22, #d35400); border-radius: 8px; transition: width 1s ease-in-out; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; }
+.barra-valor { color: #ffffff; font-size: 14px; font-weight: 800; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+.tabela-reclamacoes-painel { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2); margin-top: 18px; }
+.tabela-reclamacoes-painel thead th { background: linear-gradient(135deg, #d35400, #e67e22); color: white; padding: 16px 20px; font-size: 18px; font-weight: 700; text-align: center; }
+.tabela-reclamacoes-painel tbody td { padding: 14px 20px; color: #ffffff; font-size: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); text-align: center; }
+.tabela-reclamacoes-painel tbody tr:nth-child(even) td { background: rgba(255,255,255,0.08); }
+.menu-header { position: relative; display: flex; align-items: center; justify-content: center; padding: 30px 40px; border-bottom: 3px solid #3498db; margin-bottom: 40px; }
+.menu-logo { position: absolute; left: 40px; height: 80px; width: auto; object-fit: contain; }
+.menu-titulo-container { display: flex; justify-content: center; }
+.menu-titulo { color: #2c3e50; font-size: 36px; font-weight: 800; text-align: center; margin: 0; }
+.expedicao-layout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
+.expedicao-coluna-esquerda { display: flex; flex-direction: column; }
+.expedicao-coluna-direita { display: flex; flex-direction: column; gap: 18px; }
+.card-sla-pedidos-expedicao { background: linear-gradient(145deg, rgba(93,173,226,0.15), rgba(41,128,185,0.08)); backdrop-filter: blur(10px); border-radius: 16px; padding: 22px 18px; border: 1px solid rgba(93,173,226,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.25); text-align: center; flex: 1; }
+.card-sla-pedidos-expedicao .sla-titulo { color: #85c1e9; font-size: 20px; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.card-sla-pedidos-expedicao .sla-titulo svg { width: 24px; height: 24px; stroke: #85c1e9; fill: none; stroke-width: 2; }
+.card-sla-pedidos-expedicao .sla-gauge-svg { width: 280px; height: 160px; margin: 0 auto; }
+.card-sla-pedidos-expedicao .sla-gauge-valor { font-size: 48px; font-weight: 800; margin-top: 10px; }
+.card-sla-pedidos-expedicao .sla-gauge-label { font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+.tabela-separacao-out { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 15px; }
+.tabela-separacao-out thead th { background: linear-gradient(135deg, #16a085, #1abc9c); color: white; padding: 16px 20px; font-size: 18px; font-weight: 700; text-align: center; }
+.tabela-separacao-out thead th:first-child { width: 30%; text-align: left; padding-left: 20px; }
+.tabela-separacao-out tbody td { padding: 14px 15px; background-color: #f8f9fa; border-bottom: 1px solid #ecf0f1; }
+.tabela-separacao-out tbody tr:nth-child(even) td { background-color: #eef2f7; }
+.tabela-separacao-out tbody td:first-child { font-weight: 700; color: #2c3e50; font-size: 16px; }
+.tabela-separacao-out input { width: 100%; padding: 14px 12px; border: 2px solid #bdc3c7; border-radius: 10px; font-size: 16px; background-color: white; transition: all 0.3s; font-weight: 500; text-align: center; }
+.tabela-separacao-out input:focus { border-color: #16a085; outline: none; background-color: #fffde7; box-shadow: 0 0 0 4px rgba(22,160,133,0.1); }
+.campo-remanejamento { max-width: 400px; margin: 0 auto; }
+.campo-remanejamento input { width: 100%; padding: 16px 12px; border: 2px solid #bdc3c7; border-radius: 10px; font-size: 18px; background-color: white; transition: all 0.3s; font-weight: 600; text-align: center; }
+.campo-remanejamento input:focus { border-color: #16a085; outline: none; background-color: #fffde7; box-shadow: 0 0 0 4px rgba(22,160,133,0.1); }
+.tabela-carrinho { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 15px; }
+.tabela-carrinho thead th { background: linear-gradient(135deg, #16a085, #1abc9c); color: white; padding: 16px 20px; font-size: 18px; font-weight: 700; text-align: center; }
+.tabela-carrinho thead th:first-child { width: 40%; }
+.tabela-carrinho tbody td { padding: 12px 15px; background-color: #f8f9fa; border-bottom: 1px solid #ecf0f1; }
+.tabela-carrinho tbody tr:nth-child(even) td { background-color: #eef2f7; }
+.tabela-carrinho input { width: 100%; padding: 14px 12px; border: 2px solid #bdc3c7; border-radius: 10px; font-size: 16px; background-color: white; transition: all 0.3s; font-weight: 500; text-align: center; }
+.tabela-carrinho input:focus { border-color: #16a085; outline: none; background-color: #fffde7; box-shadow: 0 0 0 4px rgba(22,160,133,0.1); }
+.btn-add-linha-carrinho { background: linear-gradient(135deg, #16a085, #1abc9c); color: white; border: none; border-radius: 12px; width: 50px; height: 50px; font-size: 32px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; box-shadow: 0 4px 15px rgba(22,160,133,0.3); margin: 0 auto; }
+.btn-add-linha-carrinho:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(22,160,133,0.5); }
+.btn-remover-linha-carrinho { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; border-radius: 8px; width: 36px; height: 36px; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; flex-shrink: 0; }
+.btn-remover-linha-carrinho:hover { transform: scale(1.1); }
+.campo-total-carrinho { max-width: 400px; margin: 0 auto; }
+.campo-total-carrinho input { width: 100%; padding: 16px 12px; border: 2px solid #16a085; border-radius: 10px; font-size: 22px; background-color: #e8f8f5; transition: all 0.3s; font-weight: 700; text-align: center; color: #16a085; }
+.campo-total-carrinho input:focus { border-color: #16a085; outline: none; background-color: #d1f2eb; }
+
+/* Estilos para tela de consulta */
+.consulta-container { max-width: 800px; margin: 0 auto; text-align: center; }
+.consulta-titulo { color: #2c3e50; font-size: 32px; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.consulta-subtitulo { color: #7f8c8d; font-size: 16px; margin-bottom: 30px; }
+.lista-datas-semana { display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin: 0 auto 30px auto; }
+.btn-dia-semana { background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; border-radius: 12px; padding: 18px 24px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(52,152,219,0.3); }
+.btn-dia-semana:hover { transform: translateX(5px); box-shadow: 0 6px 20px rgba(52,152,219,0.5); }
+.btn-dia-semana.sem-dados { background: linear-gradient(135deg, #bdc3c7, #95a5a6); cursor: not-allowed; opacity: 0.7; box-shadow: 0 2px 10px rgba(189,195,199,0.3); }
+.btn-dia-semana.sem-dados:hover { transform: none; box-shadow: 0 2px 10px rgba(189,195,199,0.3); }
+.btn-voltar-consulta { background: linear-gradient(135deg, #95a5a6, #7f8c8d); color: white; border: none; border-radius: 12px; padding: 15px 30px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 20px; transition: all 0.3s; box-shadow: 0 4px 15px rgba(149,165,166,0.3); }
+.btn-voltar-consulta:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(149,165,166,0.5); }
+.divisor-azul { border: none; height: 3px; background: linear-gradient(90deg, #3498db, #2980b9); margin: 20px auto; max-width: 600px; border-radius: 2px; }
+
+@media (max-width: 1200px) {
+.form-layout-pc { grid-template-columns: 1fr; }
+.botoes-acao { grid-column: span 1; }
+.grid-botoes { grid-template-columns: repeat(2, 1fr); }
+.btn-painel, .btn-macmillan, .btn-corte, .btn-absenteismo { grid-column: span 2; }
+.grid-cards-principal { grid-template-columns: repeat(3, 1fr); }
+.grid-cards-secundario, .grid-cards-expedicao, .grid-cards-faleconosco { grid-template-columns: repeat(2, 1fr); }
+.expedicao-layout-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+.tela { padding: 25px; }
+.grid-botoes { grid-template-columns: 1fr; }
+.btn-painel, .btn-macmillan, .btn-corte, .btn-absenteismo { grid-column: span 1; }
+.botoes-acao { flex-direction: column; }
+.grid-cards-principal, .grid-cards-secundario, .grid-cards-expedicao, .grid-cards-faleconosco { grid-template-columns: 1fr; }
+.barra-label { min-width: 120px; font-size: 12px; }
+.menu-header { flex-direction: column; gap: 15px; padding: 20px; }
+.menu-logo { position: relative; left: 0; height: 60px; }
+.menu-titulo { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+<div class="app-container">
+<div id="tela-inicial" class="tela ativa">
+<div class="menu-header">
+<img src="https://frenet.com.br/wp-content/uploads/2025/10/luft-transportes.png" alt="Luft Transportes" class="menu-logo">
+<div class="menu-titulo-container">
+<h1 class="menu-titulo">Menu Principal</h1>
+</div>
+</div>
+<div class="grid-botoes">
+<button class="btn-modulo" onclick="mostrarTela('tela-recebimento')">📥 Recebimento</button>
+<button class="btn-modulo" onclick="mostrarTela('tela-retrabalho')">🔄 Retrabalho</button>
+<button class="btn-modulo" onclick="mostrarTela('tela-inventario')">📦 Inventário</button>
+<button class="btn-modulo" onclick="mostrarTela('tela-expedicao')">📤 Expedição</button>
+<button class="btn-modulo" onclick="mostrarTela('tela-qualidade')">✅ Qualidade</button>
+<button class="btn-modulo" onclick="mostrarTela('tela-faleconosco')">💬 Fale Conosco</button>
+<button class="btn-modulo" onclick="mostrarTela('tela-separacao')">📦 Separação</button>
+<button class="btn-modulo btn-macmillan" onclick="alert('Módulo em desenvolvimento')">🏢 Macmillan</button>
+<button class="btn-modulo btn-corte" onclick="mostrarTela('tela-corte')">✂️ Corte</button>
+<button class="btn-modulo btn-absenteismo" onclick="mostrarTela('tela-absenteismo')">👥 Absenteísmo</button>
+<button class="btn-modulo btn-painel" onclick="abrirPainel()">📊 Painel de Controle (TV)</button>
+<button class="btn-modulo btn-consultar" onclick="mostrarTela('tela-consulta-semana'); carregarConsultaSemana();">📅 Consultar Painel Anterior</button>
+</div>
+</div>
+
+<!-- TELA DE CONSULTA -->
+<div id="tela-consulta-semana" class="tela">
+<div class="consulta-container">
+<h1 class="consulta-titulo">📅 Consultar Painel Anterior</h1>
+<hr class="divisor-azul">
+<p class="consulta-subtitulo">Selecione um dia da semana para visualizar:</p>
+<div class="lista-datas-semana" id="lista-datas-semana"></div>
+<button class="btn-voltar-consulta" onclick="mostrarTela('tela-inicial')">← Voltar ao Menu</button>
+</div>
+</div>
+
+<div id="tela-recebimento" class="tela">
+<h1>Recebimento</h1>
+<div class="form-layout-pc">
+<div class="form-coluna-esquerda">
+<table class="tabela-form">
+<thead><tr><th>Qtde Or</th><th>Gráfica</th><th>Devolução</th></tr></thead>
+<tbody>
+<tr class="linha-total"><td>Total OR</td><td><input type="number" id="totalGrafica" placeholder="0"></td><td><input type="number" id="totalDevolucao" placeholder="0"></td></tr>
+<tr><td>Em Conferência</td><td><input type="number" id="confGrafica" placeholder="0"></td><td><input type="number" id="confDevolucao" placeholder="0"></td></tr>
+<tr><td>Em Alocação</td><td><input type="number" id="alocGrafica" placeholder="0"></td><td><input type="number" id="alocDevolucao" placeholder="0"></td></tr>
+<tr><td>Em Divergência</td><td><input type="number" id="divGrafica" placeholder="0"></td><td><input type="number" id="divDevolucao" placeholder="0"></td></tr>
+<tr><td>Com Cliente</td><td><input type="number" id="cliGrafica" placeholder="0"></td><td><input type="number" id="cliDevolucao" placeholder="0"></td></tr>
+</tbody>
+</table>
+<div class="secao-antiga">
+<h2>Or mais Antiga</h2>
+<div class="campos-antiga">
+<div class="lista-ors-antigas" id="lista-ors-antigas"><div class="campo-or-container"><input type="text" class="input-or-antiga" placeholder="Ex: A123B"></div></div>
+<button class="btn-adicionar-campo" onclick="adicionarCampoOr()"><span style="font-size: 24px; font-weight: bold;">+</span> Adicionar mais OR</button>
+</div>
+</div>
+<div class="secao-sla">
+<h2>SLA de NF's Recebidas</h2>
+<div class="sla-conteudo">
+<div class="sla-input-container">
+<svg class="sla-preview-gauge" id="sla-preview" viewBox="0 0 220 130"><path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="#ecf0f1" stroke-width="20" stroke-linecap="round"/><path id="sla-preview-arc" d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="#95a5a6" stroke-width="20" stroke-linecap="round" stroke-dasharray="0 283"/><g class="sla-agulha" id="sla-preview-agulha" style="transform: rotate(-90deg);"><line x1="110" y1="110" x2="110" y2="30" stroke="#2c3e50" stroke-width="4" stroke-linecap="round"/><circle cx="110" cy="110" r="8" fill="#2c3e50"/></g></svg>
+<div class="sla-input-wrapper"><input type="number" id="slaPercentual" placeholder="0,00" step="0.01" min="0" max="100" oninput="atualizarPreviewSLA()"><span class="sla-input-suffix">%</span></div>
+<div class="sla-legendas"><div class="sla-legenda-item"><div class="sla-legenda-cor cor-vermelho"></div><span>0% a 86%</span></div><div class="sla-legenda-item"><div class="sla-legenda-cor cor-amarelo"></div><span>87% a 97%</span></div><div class="sla-legenda-item"><div class="sla-legenda-cor cor-verde"></div><span>98% a 100%</span></div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="form-coluna-direita">
+<div class="secao-linhas-dinamicas">
+<h2>Controles Adicionais</h2>
+<div class="grupo-linhas" id="grupo-linhas">
+<div class="linha-dinamica" data-tipo="Digitado"><span class="linha-label">Digitado</span><input type="number" class="linha-input-num" placeholder="0"><input type="text" class="linha-input-text" placeholder="Ex: 123 ou ABC"><button class="btn-add-linha" onclick="adicionarLinha('Digitado')">+</button></div>
+<div class="linha-dinamica" data-tipo="Pendente"><span class="linha-label">Pendente</span><input type="number" class="linha-input-num" placeholder="0"><input type="text" class="linha-input-text" placeholder="Ex: 123 ou ABC"><button class="btn-add-linha" onclick="adicionarLinha('Pendente')">+</button></div>
+<div class="linha-dinamica" data-tipo="Ag. Dia"><span class="linha-label">Ag. Dia</span><input type="number" class="linha-input-num" placeholder="0"><input type="text" class="linha-input-text" placeholder="Ex: 123 ou ABC"><button class="btn-add-linha" onclick="adicionarLinha('Ag. Dia')">+</button></div>
+<div class="linha-dinamica" data-tipo="Precupação"><span class="linha-label">Precupação</span><input type="number" class="linha-input-num" placeholder="0"><input type="text" class="linha-input-text" placeholder="Ex: 123 ou ABC"><button class="btn-add-linha" onclick="adicionarLinha('Precupação')">+</button></div>
+</div>
+</div>
+</div>
+<div class="botoes-acao">
+<button class="btn-salvar" onclick="salvarRecebimento()">💾 Salvar Dados</button>
+<button class="btn-voltar" onclick="mostrarTela('tela-inicial')">← Voltar ao Menu</button>
+</div>
+</div>
+</div>
+<div id="tela-retrabalho" class="tela">
+<h1 style="border-bottom-color: #e67e22;">Retrabalho</h1>
+<div style="max-width: 900px; margin: 0 auto;">
+<div class="secao-retrabalho">
+<h2>Registro de Retrabalho</h2>
+<div class="retrabalho-conteudo">
+<table class="tabela-retrabalho" id="tabela-retrabalho">
+<thead><tr><th>Depositante</th><th>Descrição</th><th style="width: 60px;"></th></tr></thead>
+<tbody id="corpo-tabela-retrabalho"><tr><td><input type="text" class="input-depositante" placeholder="Nome do depositante"></td><td><input type="text" class="input-descricao" placeholder="Descrição do retrabalho"></td><td></td></tr></tbody>
+</table>
+<button class="btn-add-linha-retrabalho" onclick="adicionarLinhaRetrabalho()">+</button>
+</div>
+</div>
+<div style="display: flex; gap: 20px; margin-top: 30px;">
+<button class="btn-salvar" onclick="salvarRetrabalho()" style="background: linear-gradient(135deg, #d35400, #e67e22);">💾 Salvar Retrabalho</button>
+<button class="btn-voltar" onclick="mostrarTela('tela-inicial')">← Voltar ao Menu</button>
+</div>
+</div>
+</div>
+<div id="tela-inventario" class="tela">
+<h1 style="border-bottom-color: #27ae60;">Inventário</h1>
+<div style="max-width: 1200px; margin: 0 auto;">
+<div class="secao-inventario">
+<h2>Registro de Inventário</h2>
+<div class="inventario-conteudo">
+<table class="tabela-inventario" id="tabela-inventario">
+<thead><tr><th>Depositante</th><th>TT</th><th>Contado</th><th>Evolução (%)</th><th>ILA (%)</th><th>Acurácia (%)</th><th style="width: 60px;"></th></tr></thead>
+<tbody id="corpo-tabela-inventario">
+<tr>
+<td><input type="text" class="input-depositante-inv" placeholder="Nome"></td>
+<td><input type="text" class="input-tt" placeholder="0"></td>
+<td><input type="text" class="input-contado" placeholder="0"></td>
+<td><div class="input-com-suffix"><input type="number" class="input-evolucao" placeholder="0,00" step="0.01" min="0" max="100"><span class="input-suffix">%</span></div></td>
+<td><div class="input-com-suffix"><input type="number" class="input-ila" placeholder="0,00" step="0.01" min="0" max="100"><span class="input-suffix">%</span></div></td>
+<td><div class="input-com-suffix"><input type="number" class="input-acuracia" placeholder="0,00" step="0.01" min="0" max="100"><span class="input-suffix">%</span></div></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<button class="btn-add-linha-inventario" onclick="adicionarLinhaInventario()">+</button>
+</div>
+</div>
+<div class="secao-inventario" style="margin-top: 30px;">
+<h2 style="background: linear-gradient(135deg, #6c3483, #8e44ad);">Paletes</h2>
+<div class="inventario-conteudo">
+<div class="paletes-container">
+<div class="paletes-input-wrapper">
+<input type="number" id="input-qtd-paletes" placeholder="Qtd Paletes">
+</div>
+</div>
+</div>
+</div>
+<div style="display: flex; gap: 20px; margin-top: 30px;">
+<button class="btn-salvar" onclick="salvarInventario()">💾 Salvar Inventário</button>
+<button class="btn-voltar" onclick="mostrarTela('tela-inicial')">← Voltar ao Menu</button>
+</div>
+</div>
+</div>
+<div id="tela-expedicao" class="tela">
+<h1 style="border-bottom-color: #2980b9;">Expedição</h1>
+<div style="max-width: 1000px; margin: 0 auto;">
+<div class="secao-expedicao">
+<h2>Registro de Expedição</h2>
+<div class="expedicao-conteudo">
+<table class="tabela-form" style="margin-bottom: 25px;">
+<thead><tr><th style="width: 34%;">Qtde de Volume</th><th style="width: 33%;">24 Hs</th><th style="width: 33%;">Expedido Ontem</th></tr></thead>
+<tbody><tr><td><input type="number" id="exp-volume" placeholder="0"></td><td><input type="number" id="exp-24hs" placeholder="0"></td><td><input type="number" id="exp-ontem" placeholder="0"></td></tr></tbody>
+</table>
+<table class="tabela-form">
+<thead><tr><th style="width: 50%;">Depositante</th><th style="width: 50%;">Nota Mais Antiga</th></tr></thead>
+<tbody><tr><td><input type="text" id="exp-depositante" placeholder="Nome do depositante"></td><td><input type="text" id="exp-nota-antiga" placeholder="Ex: N12345"></td></tr></tbody>
+</table>
+</div>
+</div>
+<div class="secao-expedicao" style="margin-top: 30px;">
+<h2>Pendências de Paletes</h2>
+<div class="expedicao-conteudo">
+<table class="tabela-pendencias-paletes" id="tabela-pendencias-paletes">
+<thead><tr><th>Transportadora</th><th>Paletes</th><th style="width: 60px;"></th></tr></thead>
+<tbody id="corpo-tabela-pendencias-paletes">
+<tr><td><input type="text" class="input-transportadora" placeholder="Nome da transportadora"></td><td><input type="number" class="input-paletes" placeholder="0"></td><td></td></tr>
+</tbody>
+</table>
+<button class="btn-add-linha-pendencias" onclick="adicionarLinhaPendencias()">+</button>
+</div>
+</div>
+<div class="secao-sla" style="margin-top: 30px;">
+<h2>SLA de Pedidos</h2>
+<div class="sla-conteudo">
+<div class="sla-input-container">
+<svg class="sla-preview-gauge" id="sla-pedidos-preview" viewBox="0 0 220 130">
+<path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="#ecf0f1" stroke-width="20" stroke-linecap="round"/>
+<path id="sla-pedidos-preview-arc" d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="#95a5a6" stroke-width="20" stroke-linecap="round" stroke-dasharray="0 283"/>
+<g class="sla-agulha" id="sla-pedidos-preview-agulha" style="transform: rotate(-90deg);">
+<line x1="110" y1="110" x2="110" y2="30" stroke="#2c3e50" stroke-width="4" stroke-linecap="round"/>
+<circle cx="110" cy="110" r="8" fill="#2c3e50"/>
+</g>
+</svg>
+<div class="sla-input-wrapper">
+<input type="number" id="slaPedidosPercentual" placeholder="0,00" step="0.01" min="0" max="100" oninput="atualizarPreviewSLAPedidos()">
+<span class="sla-input-suffix">%</span>
+</div>
+<div class="sla-legendas">
+<div class="sla-legenda-item"><div class="sla-legenda-cor cor-vermelho"></div><span>0% a 86%</span></div>
+<div class="sla-legenda-item"><div class="sla-legenda-cor cor-amarelo"></div><span>87% a 97%</span></div>
+<div class="sla-legenda-item"><div class="sla-legenda-cor cor-verde"></div><span>98% a 100%</span></div>
+</div>
+</div>
+</div>
+</div>
+<div style="display: flex; gap: 20px; margin-top: 30px;">
+<button class="btn-salvar" onclick="salvarExpedicao()" style="background: linear-gradient(135deg, #2471a3, #2980b9);">💾 Salvar Expedição</button>
+<button class="btn-voltar" onclick="mostrarTela('tela-inicial')">← Voltar ao Menu</button>
+</div>
+</div>
+</div>
+<div id="tela-qualidade" class="tela">
+<h1 style="border-bottom-color: #8e44ad;">Qualidade</h1>
+<div style="max-width: 900px; margin: 0 auto;">
+<div class="secao-qualidade">
+<h2>Registro de Qualidade</h2>
+<div class="qualidade-conteudo">
+<table class="tabela-form" id="tabela-qualidade">
+<thead><tr><th style="width: 20%;">Nº</th><th style="width: 70%;">Assunto</th><th style="width: 10%;"></th></tr></thead>
+<tbody id="corpo-tabela-qualidade">
+<tr><td><input type="number" class="input-qualidade-num" placeholder="1"></td><td><input type="text" class="input-qualidade-assunto" placeholder="Digite o assunto"></td><td></td></tr>
+</tbody>
+</table>
+<button class="btn-add-linha" onclick="adicionarLinhaQualidade()" style="margin: 0 auto; display: flex;">+</button>
+</div>
+</div>
+<div style="display: flex; gap: 20px; margin-top: 30px;">
+<button class="btn-salvar" onclick="salvarQualidade()" style="background: linear-gradient(135deg, #6c3483, #8e44ad);">💾 Salvar Qualidade</button>
+<button class="btn-voltar" onclick="mostrarTela('tela-inicial')">← Voltar ao Menu</button>
+</div>
+</div>
+</div>
+<div id="tela-faleconosco" class="tela">
+<h1 style="border-bottom-color: #e67e22;">Fale Conosco</h1>
+<div style="max-width: 1200px; margin: 0 auto;">
+<div class="secao-faleconosco">
+<h2>Remanações</h2>
+<div class="faleconosco-conteudo">
+<table class="tabela-form" id="tabela-remanacoes">
+<thead><tr><th style="width: 20%;">Mês</th><th style="width: 20%;">Qtde Remanações</th><th style="width: 20%;">Procedentes</th><th style="width: 20%;">Improcedentes</th><th style="width: 20%;">Em Análise</th></tr></thead>
+<tbody id="corpo-tabela-remanacoes">
+<tr><td><input type="text" class="input-mes" placeholder="Ex: Janeiro"></td><td><input type="number" class="input-qtde-remanacoes" placeholder="0"></td><td><input type="number" class="input-procedentes" placeholder="0"></td><td><input type="number" class="input-improcedentes" placeholder="0"></td><td><input type="number" class="input-em-analise" placeholder="0"></td></tr>
+</tbody>
+</table>
+<button class="btn-add-linha" onclick="adicionarLinhaRemanacoes()" style="margin: 0 auto; display: flex;">+</button>
+</div>
+</div>
+<div class="secao-faleconosco" style="margin-top: 30px;">
+<h2>Reclamações por Depositantes</h2>
+<div class="faleconosco-conteudo">
+<table class="tabela-form" id="tabela-reclamacoes">
+<thead><tr><th style="width: 40%;">Depositante</th><th style="width: 15%;">Falta</th><th style="width: 15%;">Inversão</th><th style="width: 15%;">Sobra</th><th style="width: 15%;">Dano</th><th style="width: 5%;"></th></tr></thead>
+<tbody id="corpo-tabela-reclamacoes">
+<tr><td><input type="text" class="input-depositante-rec" placeholder="Nome do depositante"></td><td><input type="number" class="input-falta" placeholder="0"></td><td><input type="number" class="input-inversao" placeholder="0"></td><td><input type="number" class="input-sobra" placeholder="0"></td><td><input type="number" class="input-dano" placeholder="0"></td><td></td></tr>
+</tbody>
+</table>
+<button class="btn-add-linha" onclick="adicionarLinhaReclamacoes()" style="margin: 0 auto; display: flex;">+</button>
+</div>
+</div>
+<div style="display: flex; gap: 20px; margin-top: 30px;">
+<button class="btn-salvar" onclick="salvarFaleConosco()" style="background: linear-gradient(135deg, #d35400, #e67e22);">💾 Salvar Fale Conosco</button>
+<button class="btn-voltar" onclick="mostrarTela('tela-inicial')">← Voltar ao Menu</button>
+</div>
+</div>
+</div>
+<div id="tela-separacao" class="tela">
+<h1 style="border-bottom-color: #16a085;">Separação</h1>
+<div style="max-width: 1000px; margin: 0 auto;">
+<div class="secao-separacao">
+<h2>Out / Ondas / Peças</h2>
+<div class="separacao-conteudo">
+<table class="tabela-separacao-out">
+<thead><tr><th>Out</th><th>Ondas</th><th>Peças</th></tr></thead>
+<tbody>
+<tr><td>Picking</td><td><input type="number" id="sep-picking-ondas" placeholder="0"></td><td><input type="number" id="sep-picking-pecas" placeholder="0"></td></tr>
+<tr><td>Pulmão</td><td><input type="number" id="sep-pulmao-ondas" placeholder="0"></td><td><input type="number" id="sep-pulmao-pecas" placeholder="0"></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="secao-separacao">
+<h2>Remanejamento</h2>
+<div class="separacao-conteudo">
+<div class="campo-remanejamento"><input type="number" id="sep-remanejamento" placeholder="0"></div>
+</div>
+</div>
+<div class="secao-separacao">
+<h2>Carrinhos por Depositante</h2>
+<div class="separacao-conteudo">
+<table class="tabela-carrinho" id="tabela-carrinho">
+<thead><tr><th>Qtde Carrinho</th><th>Depositante</th><th style="width: 60px;"></th></tr></thead>
+<tbody id="corpo-tabela-carrinho">
+<tr><td><input type="number" class="input-qtde-carrinho" placeholder="0" oninput="calcularTotalCarrinho()"></td><td><input type="text" class="input-depositante-carrinho" placeholder="Nome do depositante"></td><td></td></tr>
+</tbody>
+</table>
+<button class="btn-add-linha-carrinho" onclick="adicionarLinhaCarrinho()">+</button>
+</div>
+</div>
+<div class="secao-separacao">
+<h2>Total de Carrinho</h2>
+<div class="separacao-conteudo">
+<div class="campo-total-carrinho"><input type="number" id="sep-total-carrinho" placeholder="0" readonly></div>
+</div>
+</div>
+<div style="display: flex; gap: 20px; margin-top: 30px;">
+<button class="btn-salvar" onclick="salvarSeparacao()" style="background: linear-gradient(135deg, #16a085, #1abc9c);">💾 Salvar Separação</button>
+<button class="btn-voltar" onclick="mostrarTela('tela-inicial')">← Voltar ao Menu</button>
+</div>
+</div>
+</div>
+<div id="tela-corte" class="tela">
+<h1 style="border-bottom-color: #e67e22;">Corte</h1>
+<div style="max-width: 800px; margin: 0 auto; text-align: center; padding: 60px 20px;">
+<div style="font-size: 80px; margin-bottom: 20px;">✂️</div>
+<h2 style="color: #2c3e50; margin-bottom: 20px;">Módulo de Corte</h2>
+<p style="color: #7f8c8d; font-size: 18px; margin-bottom: 30px;">Este módulo está em desenvolvimento e estará disponível em breve.</p>
+<button class="btn-voltar" onclick="mostrarTela('tela-inicial')" style="max-width: 300px; margin: 0 auto;">← Voltar ao Menu</button>
+</div>
+</div>
+<div id="tela-absenteismo" class="tela">
+<h1 style="border-bottom-color: #9b59b6;">Absenteísmo</h1>
+<div style="max-width: 800px; margin: 0 auto; text-align: center; padding: 60px 20px;">
+<div style="font-size: 80px; margin-bottom: 20px;">👥</div>
+<h2 style="color: #2c3e50; margin-bottom: 20px;">Módulo de Absenteísmo</h2>
+<p style="color: #7f8c8d; font-size: 18px; margin-bottom: 30px;">Este módulo está em desenvolvimento e estará disponível em breve.</p>
+<button class="btn-voltar" onclick="mostrarTela('tela-inicial')" style="max-width: 300px; margin: 0 auto;">← Voltar ao Menu</button>
+</div>
+</div>
+</div>
+<div id="tela-painel" class="tela-painel-fullscreen">
+<div class="painel-header">
+<div class="relogio-container" id="relogio-container"><div class="relogio-data" id="relogio-data">--/--/----</div><div class="relogio-hora" id="relogio-hora">--:--</div></div>
+<h1 class="painel-titulo-principal">Painel de Controle - Recebimento</h1>
+<div class="painel-botoes"><button class="btn-painel-acao" onclick="limparPainel()">🗑️ Limpar</button><button class="btn-painel-acao btn-fechar" onclick="fecharPainel()">✕ Fechar</button></div>
+</div>
+<div id="conteudo-painel">
+<div class="grid-cards-principal" id="grid-principal">
+<div class="card-moderno"><div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div><span class="card-titulo">Total OR</span></div><div class="card-conteudo"><div class="card-linha">Gráfica: <strong id="card-total-grafica">0</strong><span id="tend-total-grafica"></span></div><div class="card-linha">Devolução: <strong id="card-total-devolucao">0</strong><span id="tend-total-devolucao"></span></div></div></div>
+<div class="card-moderno"><div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path></svg></div><span class="card-titulo">Em Conferência</span></div><div class="card-conteudo"><div class="card-linha">Gráfica: <strong id="card-conf-grafica">0</strong></div><div class="card-linha">Devolução: <strong id="card-conf-devolucao">0</strong></div></div></div>
+<div class="card-moderno"><div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></div><span class="card-titulo">Em Alocação</span></div><div class="card-conteudo"><div class="card-linha">Gráfica: <strong id="card-aloc-grafica">0</strong></div><div class="card-linha">Devolução: <strong id="card-aloc-devolucao">0</strong></div></div></div>
+<div class="card-moderno"><div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div><span class="card-titulo">Em Divergência</span></div><div class="card-conteudo"><div class="card-linha">Gráfica: <strong id="card-div-grafica">0</strong></div><div class="card-linha">Devolução: <strong id="card-div-devolucao">0</strong></div></div></div>
+<div class="card-moderno"><div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div><span class="card-titulo">Com Cliente</span></div><div class="card-conteudo"><div class="card-linha">Gráfica: <strong id="card-cli-grafica">0</strong></div><div class="card-linha">Devolução: <strong id="card-cli-devolucao">0</strong></div></div></div>
+</div>
+<div class="grid-cards-secundario" id="grid-secundario">
+<div class="card-moderno card-secundario-detalhado"><div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></div><span class="card-titulo">Digitado</span></div><div class="card-total-valor" id="card-dig-total">0</div><div class="card-detalhes-lista" id="card-dig-detalhes"></div></div>
+<div class="card-moderno card-secundario-detalhado"><div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path></svg></div><span class="card-titulo">Pendente</span></div><div class="card-total-valor" id="card-pend-total">0</div><div class="card-detalhes-lista" id="card-pend-detalhes"></div></div>
+<div class="card-moderno card-secundario-detalhado"><div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div><span class="card-titulo">Ag. Dia</span></div><div class="card-total-valor" id="card-ag-total">0</div><div class="card-detalhes-lista" id="card-ag-detalhes"></div></div>
+<div class="card-moderno card-secundario-detalhado"><div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div><span class="card-titulo">Precupação</span></div><div class="card-total-valor" id="card-prec-total">0</div><div class="card-detalhes-lista" id="card-prec-detalhes"></div></div>
+</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 22px;">
+<div class="card-moderno" id="card-sla-container">
+<div class="card-header" style="justify-content: center;"><div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div><span class="card-titulo" style="font-size: 18px;">SLA de NF's Recebidas</span></div>
+<div class="card-sla-container">
+<div class="sla-gauge-wrapper">
+<svg class="sla-gauge-svg" id="sla-gauge-painel" viewBox="0 0 220 130"><path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="22" stroke-linecap="round"/><path d="M 20 110 A 90 90 0 0 1 155.6 25.4" fill="none" stroke="#e74c3c" stroke-width="22" stroke-linecap="butt" opacity="0.3"/><path d="M 155.6 25.4 A 90 90 0 0 1 188.2 47.2" fill="none" stroke="#f1c40f" stroke-width="22" stroke-linecap="butt" opacity="0.3"/><path d="M 188.2 47.2 A 90 90 0 0 1 200 110" fill="none" stroke="#27ae60" stroke-width="22" stroke-linecap="butt" opacity="0.3"/><path id="sla-arc-fill" d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="#95a5a6" stroke-width="22" stroke-linecap="round" stroke-dasharray="0 283"/><g class="sla-agulha" id="sla-agulha-painel" style="transform: rotate(-90deg);"><line x1="110" y1="110" x2="110" y2="25" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/><circle cx="110" cy="110" r="10" fill="#ffffff"/><circle cx="110" cy="110" r="5" fill="#2c3e50"/></g></svg>
+<div class="sla-gauge-valor" id="sla-valor-painel">0,00%</div><div class="sla-gauge-label" id="sla-status-painel">Aguardando dados</div>
+</div>
+</div>
+</div>
+<div class="card-moderno card-or-antiga" id="card-or-antiga-container"><div class="card-header"><div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div><span class="card-titulo">Or mais Antiga</span></div><div class="card-conteudo"><div class="card-linha-texto" id="card-ors-antigas">-</div></div></div>
+</div>
+<div class="secao-modulo-painel" id="secao-retrabalho-painel">
+<div class="modulo-header-painel"><div class="modulo-titulo-painel retrabalho-titulo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e67e22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>Painel de Controle - Retrabalho</div><div class="modulo-data-painel" id="retrabalho-data-painel">Última atualização: --</div></div>
+<table class="tabela-modulo-painel" id="tabela-retrabalho-painel"><thead><tr><th>Depositante</th><th>Descrição</th></tr></thead><tbody id="corpo-tabela-retrabalho-painel"></tbody></table>
+<p id="msg-vazia-retrabalho" class="msg-vazia-modulo" style="display: none;">Nenhum registro de retrabalho encontrado.</p>
+</div>
+<div class="secao-modulo-painel" id="secao-inventario-painel">
+<div class="modulo-header-painel inventario-header">
+<div class="modulo-titulo-painel inventario-titulo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>Painel de Controle - Inventário</div>
+<div class="modulo-data-painel" id="inventario-data-painel">Última atualização: --</div>
+</div>
+<table class="tabela-modulo-painel" id="tabela-inventario-painel"><thead><tr><th>Depositante</th><th>TT</th><th>Contado</th><th>Evolução</th><th>ILA</th><th>Acurácia</th></tr></thead><tbody id="corpo-tabela-inventario-painel"></tbody></table>
+<p id="msg-vazia-inventario" class="msg-vazia-modulo" style="display: none;">Nenhum registro de inventário encontrado.</p>
+<div id="paletes-no-inventario" style="margin-top: 20px; display: none;">
+<div style="background: linear-gradient(135deg, #6c3483, #8e44ad); padding: 14px 20px; border-radius: 12px 12px 0 0; text-align: center;"><span style="color: white; font-size: 20px; font-weight: 700;">📦 Qtd Paletes</span></div>
+<div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 0 0 12px 12px; text-align: center; border: 1px solid rgba(142,68,173,0.3); border-top: none;"><span id="qtd-paletes-valor" style="color: #ffffff; font-size: 36px; font-weight: 800;">0</span></div>
+</div>
+</div>
+<div class="secao-modulo-painel" id="secao-expedicao-painel">
+<div class="modulo-header-painel expedicao-header">
+<div class="modulo-titulo-painel expedicao-titulo">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5dade2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+Painel de Controle - Expedição
+</div>
+<div class="modulo-data-painel" id="expedicao-data-painel">Última atualização: --</div>
+</div>
+<div class="grid-cards-expedicao">
+<div class="card-expedicao"><div class="card-expedicao-titulo">📦 QTDE DE VOLUME</div><div class="card-expedicao-valor-container"><div class="card-expedicao-valor" id="card-exp-volume">0</div><div class="card-expedicao-tendencia" id="tend-exp-volume"></div></div></div>
+<div class="card-expedicao card-expedicao-destaque"><div class="card-expedicao-titulo">⏱️ 24 HS</div><div class="card-expedicao-valor-container"><div class="card-expedicao-valor" id="card-exp-24hs">0</div><div class="card-expedicao-tendencia" id="tend-exp-24hs"></div></div></div>
+<div class="card-expedicao"><div class="card-expedicao-titulo">📤 EXPEDIDO ONTEM</div><div class="card-expedicao-valor-container"><div class="card-expedicao-valor" id="card-exp-ontem">0</div><div class="card-expedicao-tendencia" id="tend-exp-ontem"></div></div></div>
+</div>
+<div class="expedicao-layout-grid">
+<div class="expedicao-coluna-esquerda">
+<div class="card-sla-pedidos-expedicao">
+<div class="sla-titulo"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>SLA de Pedidos</div>
+<svg class="sla-gauge-svg" id="sla-pedidos-gauge-painel" viewBox="0 0 220 130">
+<path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="22" stroke-linecap="round"/>
+<path d="M 20 110 A 90 90 0 0 1 155.6 25.4" fill="none" stroke="#e74c3c" stroke-width="22" stroke-linecap="butt" opacity="0.3"/>
+<path d="M 155.6 25.4 A 90 90 0 0 1 188.2 47.2" fill="none" stroke="#f1c40f" stroke-width="22" stroke-linecap="butt" opacity="0.3"/>
+<path d="M 188.2 47.2 A 90 90 0 0 1 200 110" fill="none" stroke="#27ae60" stroke-width="22" stroke-linecap="butt" opacity="0.3"/>
+<path id="sla-pedidos-arc-fill" d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="#95a5a6" stroke-width="22" stroke-linecap="round" stroke-dasharray="0 283"/>
+<g class="sla-agulha" id="sla-pedidos-agulha-painel" style="transform: rotate(-90deg);"><line x1="110" y1="110" x2="110" y2="25" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/><circle cx="110" cy="110" r="10" fill="#ffffff"/><circle cx="110" cy="110" r="5" fill="#2c3e50"/></g>
+</svg>
+<div class="sla-gauge-valor" id="sla-pedidos-valor-painel">0,00%</div>
+<div class="sla-gauge-label" id="sla-pedidos-status-painel">Aguardando dados</div>
+</div>
+</div>
+<div class="expedicao-coluna-direita">
+<div class="card-nota-antiga" id="card-nota-antiga-exp" style="margin-top: 0;">
+<div class="card-nota-antiga-header">📋 Informações do Depositante</div>
+<div class="card-nota-antiga-conteudo">
+<div class="card-nota-item"><div class="card-nota-item-label">Depositante</div><div class="card-nota-item-valor" id="card-exp-depositante">-</div></div>
+<div class="card-nota-item"><div class="card-nota-item-label">Nota Mais Antiga</div><div class="card-nota-item-valor" id="card-exp-nota-antiga" style="color: #e74c3c;">-</div></div>
+</div>
+</div>
+<div id="pendencias-paletes-painel" style="display: none;">
+<div style="background: linear-gradient(135deg, rgba(26,82,118,0.3), rgba(41,128,185,0.2)); padding: 14px 20px; border-radius: 12px; margin-bottom: 15px;"><span style="color: #5dade2; font-size: 18px; font-weight: 700;">📦 Pendências de Paletes</span></div>
+<table class="tabela-modulo-painel" id="tabela-pendencias-painel"><thead><tr><th>Transportadora</th><th>Paletes</th></tr></thead><tbody id="corpo-tabela-pendencias-painel"></tbody></table>
+</div>
+</div>
+</div>
+</div>
+<div class="secao-modulo-painel" id="secao-qualidade-painel">
+<div class="modulo-header-painel qualidade-header">
+<div class="modulo-titulo-painel qualidade-titulo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#af7ac5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>Painel de Controle - Qualidade</div>
+<div class="modulo-data-painel" id="qualidade-data-painel">Última atualização: --</div>
+</div>
+<div class="grid-cards-qualidade" id="grid-qualidade-painel"></div>
+<p id="msg-vazia-qualidade" class="msg-vazia-modulo" style="display: none;">Nenhum registro de qualidade encontrado.</p>
+</div>
+<div class="secao-modulo-painel" id="secao-faleconosco-painel">
+<div class="modulo-header-painel faleconosco-header">
+<div class="modulo-titulo-painel faleconosco-titulo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e67e22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>Painel de Controle - Fale Conosco</div>
+<div class="modulo-data-painel" id="faleconosco-data-painel">Última atualização: --</div>
+</div>
+<div class="grid-cards-faleconosco">
+<div class="card-fc-stat destaque"><div class="card-fc-titulo">Total Remanações</div><div class="card-fc-valor" id="fc-total-remanacoes">0</div></div>
+<div class="card-fc-stat"><div class="card-fc-titulo">Procedentes</div><div class="card-fc-valor" id="fc-total-procedentes">0</div></div>
+<div class="card-fc-stat"><div class="card-fc-titulo">Improcedentes</div><div class="card-fc-valor" id="fc-total-improcedentes">0</div></div>
+<div class="card-fc-stat"><div class="card-fc-titulo">Em Análise</div><div class="card-fc-valor" id="fc-total-em-analise">0</div></div>
+</div>
+<div class="grafico-container">
+<div class="grafico-titulo">📊 Reclamações por Depositantes</div>
+<div class="grafico-barras" id="grafico-reclamacoes"></div>
+</div>
+<table class="tabela-reclamacoes-painel" id="tabela-reclamacoes-painel"><thead><tr><th>Depositante</th><th>Falta</th><th>Inversão</th><th>Sobra</th><th>Dano</th><th>Total</th></tr></thead><tbody id="corpo-tabela-reclamacoes-painel"></tbody></table>
+<p id="msg-vazia-faleconosco" class="msg-vazia-modulo" style="display: none;">Nenhum registro de fale conosco encontrado.</p>
+</div>
+<div class="secao-modulo-painel" id="secao-separacao-painel">
+<div class="modulo-header-painel separacao-header">
+<div class="modulo-titulo-painel separacao-titulo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a085" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>Painel de Controle - Separação</div>
+<div class="modulo-data-painel" id="separacao-data-painel">Última atualização: --</div>
+</div>
+<div class="grid-cards-expedicao" style="margin-bottom: 22px;">
+<div class="card-expedicao"><div class="card-expedicao-titulo">📦 Picking - Ondas</div><div class="card-expedicao-valor-container"><div class="card-expedicao-valor" id="card-sep-picking-ondas">0</div></div></div>
+<div class="card-expedicao"><div class="card-expedicao-titulo">📦 Picking - Peças</div><div class="card-expedicao-valor-container"><div class="card-expedicao-valor" id="card-sep-picking-pecas">0</div></div></div>
+<div class="card-expedicao card-expedicao-destaque"><div class="card-expedicao-titulo">🔄 Remanejamento</div><div class="card-expedicao-valor-container"><div class="card-expedicao-valor" id="card-sep-remanejamento">0</div></div></div>
+</div>
+<div class="grid-cards-expedicao" style="margin-bottom: 22px;">
+<div class="card-expedicao"><div class="card-expedicao-titulo">📦 Pulmão - Ondas</div><div class="card-expedicao-valor-container"><div class="card-expedicao-valor" id="card-sep-pulmao-ondas">0</div></div></div>
+<div class="card-expedicao"><div class="card-expedicao-titulo">📦 Pulmão - Peças</div><div class="card-expedicao-valor-container"><div class="card-expedicao-valor" id="card-sep-pulmao-pecas">0</div></div></div>
+<div class="card-expedicao card-expedicao-destaque"><div class="card-expedicao-titulo">🛒 Total de Carrinho</div><div class="card-expedicao-valor-container"><div class="card-expedicao-valor" id="card-sep-total-carrinho">0</div></div></div>
+</div>
+<div id="carrinhos-por-depositante-painel" style="display: none;">
+<div style="background: linear-gradient(135deg, rgba(22,160,133,0.3), rgba(26,188,156,0.2)); padding: 14px 20px; border-radius: 12px; margin-bottom: 15px;"><span style="color: #16a085; font-size: 18px; font-weight: 700;">🛒 Carrinhos por Depositante</span></div>
+<table class="tabela-modulo-painel" id="tabela-carrinho-painel"><thead><tr><th>Qtde Carrinho</th><th>Depositante</th></tr></thead><tbody id="corpo-tabela-carrinho-painel"></tbody></table>
+</div>
+</div>
+<p id="msg-vazia-painel" class="msg-vazia-painel" style="display: none;">Nenhum registro encontrado. Preencha o formulário de Recebimento.</p>
+</div>
+</div>
+<script>
+let contadorCamposOr = 1;
+let intervaloRelogio;
+function mostrarTela(idTela) { document.querySelectorAll('.tela').forEach(tela => tela.classList.remove('ativa')); document.getElementById(idTela).classList.add('ativa'); }
+function abrirPainel() { document.getElementById('tela-painel').classList.add('ativa'); document.getElementById('relogio-container').style.display = 'flex'; iniciarRelogio(); carregarDadosPainel(); }
+function fecharPainel() { document.getElementById('tela-painel').classList.remove('ativa'); clearInterval(intervaloRelogio); }
+function iniciarRelogio() { atualizarRelogio(); intervaloRelogio = setInterval(atualizarRelogio, 1000); }
+function atualizarRelogio() { const agora = new Date(); document.getElementById('relogio-data').textContent = agora.toLocaleDateString('pt-BR'); document.getElementById('relogio-hora').textContent = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); }
+function adicionarCampoOr() { contadorCamposOr++; const lista = document.getElementById('lista-ors-antigas'); const novoCampo = document.createElement('div'); novoCampo.className = 'campo-or-container'; novoCampo.innerHTML = `<input type="text" class="input-or-antiga" placeholder="Ex: OR${contadorCamposOr}"><button class="btn-remover-campo" onclick="removerCampo(this)">×</button>`; lista.appendChild(novoCampo); }
+function removerCampo(botao) { const lista = document.getElementById('lista-ors-antigas'); if (lista.children.length > 1) { botao.parentElement.remove(); } else { alert('É necessário manter pelo menos um campo!'); } }
+function adicionarLinha(tipo) { const grupo = document.getElementById('grupo-linhas'); const novaLinha = document.createElement('div'); novaLinha.className = 'linha-dinamica'; novaLinha.setAttribute('data-tipo', tipo); novaLinha.innerHTML = `<span class="linha-label">${tipo}</span><input type="number" class="linha-input-num" placeholder="0"><input type="text" class="linha-input-text" placeholder="Ex: 123 ou ABC"><button class="btn-remover-linha" onclick="removerLinha(this)">×</button>`; const linhasDoTipo = grupo.querySelectorAll(`.linha-dinamica[data-tipo="${tipo}"]`); const ultimaLinha = linhasDoTipo[linhasDoTipo.length - 1]; ultimaLinha.insertAdjacentElement('afterend', novaLinha); }
+function removerLinha(botao) { const tipo = botao.parentElement.getAttribute('data-tipo'); const grupo = document.getElementById('grupo-linhas'); const linhasDoTipo = grupo.querySelectorAll(`.linha-dinamica[data-tipo="${tipo}"]`); if (linhasDoTipo.length > 1) { botao.parentElement.remove(); } else { alert(`É necessário manter pelo menos uma linha de "${tipo}"!`); } }
+function coletarLinhas(tipo) { const linhas = document.querySelectorAll(`.linha-dinamica[data-tipo="${tipo}"]`); const resultado = []; linhas.forEach(linha => { const num = linha.querySelector('.linha-input-num').value || '0'; const txt = linha.querySelector('.linha-input-text').value || '-'; resultado.push(`${num}|${txt}`); }); return resultado; }
+function adicionarLinhaRetrabalho() { const corpo = document.getElementById('corpo-tabela-retrabalho'); const novaLinha = document.createElement('tr'); novaLinha.innerHTML = `<td><input type="text" class="input-depositante" placeholder="Nome do depositante"></td><td><input type="text" class="input-descricao" placeholder="Descrição do retrabalho"></td><td><button class="btn-remover-linha-retrabalho" onclick="removerLinhaRetrabalho(this)">×</button></td>`; corpo.appendChild(novaLinha); }
+function removerLinhaRetrabalho(botao) { const corpo = document.getElementById('corpo-tabela-retrabalho'); if (corpo.children.length > 1) { botao.closest('tr').remove(); } else { alert('É necessário manter pelo menos uma linha!'); } }
+function salvarRetrabalho() { const linhas = document.querySelectorAll('#corpo-tabela-retrabalho tr'); const registros = []; linhas.forEach(linha => { const depositante = linha.querySelector('.input-depositante').value.trim(); const descricao = linha.querySelector('.input-descricao').value.trim(); if (depositante !== '' || descricao !== '') { registros.push({ depositante: depositante || '-', descricao: descricao || '-' }); } }); if (registros.length === 0) { alert('Preencha pelo menos um registro de retrabalho!'); return; } const registroRetrabalho = { data: new Date().toLocaleString('pt-BR'), registros: registros }; localStorage.setItem('historicoRetrabalho', JSON.stringify(registroRetrabalho)); document.querySelectorAll('#tela-retrabalho input').forEach(input => input.value = ''); const corpo = document.getElementById('corpo-tabela-retrabalho'); corpo.innerHTML = `<tr><td><input type="text" class="input-depositante" placeholder="Nome do depositante"></td><td><input type="text" class="input-descricao" placeholder="Descrição do retrabalho"></td><td></td></tr>`; alert('Retrabalho salvo com sucesso!'); }
+function adicionarLinhaInventario() { const corpo = document.getElementById('corpo-tabela-inventario'); const novaLinha = document.createElement('tr'); novaLinha.innerHTML = `<td><input type="text" class="input-depositante-inv" placeholder="Nome"></td><td><input type="text" class="input-tt" placeholder="0"></td><td><input type="text" class="input-contado" placeholder="0"></td><td><div class="input-com-suffix"><input type="number" class="input-evolucao" placeholder="0,00" step="0.01" min="0" max="100"><span class="input-suffix">%</span></div></td><td><div class="input-com-suffix"><input type="number" class="input-ila" placeholder="0,00" step="0.01" min="0" max="100"><span class="input-suffix">%</span></div></td><td><div class="input-com-suffix"><input type="number" class="input-acuracia" placeholder="0,00" step="0.01" min="0" max="100"><span class="input-suffix">%</span></div></td><td><button class="btn-remover-linha-inventario" onclick="removerLinhaInventario(this)">×</button></td>`; corpo.appendChild(novaLinha); }
+function removerLinhaInventario(botao) { const corpo = document.getElementById('corpo-tabela-inventario'); if (corpo.children.length > 1) { botao.closest('tr').remove(); } else { alert('É necessário manter pelo menos uma linha!'); } }
+function salvarInventario() { const linhasInv = document.querySelectorAll('#corpo-tabela-inventario tr'); const registrosInv = []; linhasInv.forEach(linha => { const depositante = linha.querySelector('.input-depositante-inv').value.trim(); const tt = linha.querySelector('.input-tt').value.trim(); const contado = linha.querySelector('.input-contado').value.trim(); const evolucao = linha.querySelector('.input-evolucao').value; const ila = linha.querySelector('.input-ila').value; const acuracia = linha.querySelector('.input-acuracia').value; if (depositante !== '' || tt !== '' || contado !== '') { registrosInv.push({ depositante: depositante || '-', tt: tt || '0', contado: contado || '0', evolucao: evolucao ? parseFloat(evolucao).toFixed(2) + '%' : '0,00%', ila: ila ? parseFloat(ila).toFixed(2) + '%' : '0,00%', acuracia: acuracia ? parseFloat(acuracia).toFixed(2) + '%' : '0,00%' }); } }); const qtdPaletes = document.getElementById('input-qtd-paletes').value.trim(); if (registrosInv.length === 0 && qtdPaletes === '') { alert('Preencha pelo menos um registro de inventário ou paletes!'); return; } const registroInventario = { data: new Date().toLocaleString('pt-BR'), registrosInventario: registrosInv, qtdPaletes: qtdPaletes || '0' }; localStorage.setItem('historicoInventario', JSON.stringify(registroInventario)); document.querySelectorAll('#tela-inventario #tabela-inventario input').forEach(input => input.value = ''); const corpoInv = document.getElementById('corpo-tabela-inventario'); corpoInv.innerHTML = `<tr><td><input type="text" class="input-depositante-inv" placeholder="Nome"></td><td><input type="text" class="input-tt" placeholder="0"></td><td><input type="text" class="input-contado" placeholder="0"></td><td><div class="input-com-suffix"><input type="number" class="input-evolucao" placeholder="0,00" step="0.01" min="0" max="100"><span class="input-suffix">%</span></div></td><td><div class="input-com-suffix"><input type="number" class="input-ila" placeholder="0,00" step="0.01" min="0" max="100"><span class="input-suffix">%</span></div></td><td><div class="input-com-suffix"><input type="number" class="input-acuracia" placeholder="0,00" step="0.01" min="0" max="100"><span class="input-suffix">%</span></div></td><td></td></tr>`; document.getElementById('input-qtd-paletes').value = ''; alert('Inventário e Paletes salvos com sucesso!'); }
+function adicionarLinhaPendencias() { const corpo = document.getElementById('corpo-tabela-pendencias-paletes'); const novaLinha = document.createElement('tr'); novaLinha.innerHTML = `<td><input type="text" class="input-transportadora" placeholder="Nome da transportadora"></td><td><input type="number" class="input-paletes" placeholder="0"></td><td><button class="btn-remover-linha-pendencias" onclick="removerLinhaPendencias(this)">×</button></td>`; corpo.appendChild(novaLinha); }
+function removerLinhaPendencias(botao) { const corpo = document.getElementById('corpo-tabela-pendencias-paletes'); if (corpo.children.length > 1) { botao.closest('tr').remove(); } else { alert('É necessário manter pelo menos uma linha!'); } }
+function salvarExpedicao() { try { const volume = document.getElementById('exp-volume').value.trim(); const hs24 = document.getElementById('exp-24hs').value.trim(); const ontem = document.getElementById('exp-ontem').value.trim(); const depositante = document.getElementById('exp-depositante').value.trim(); const notaAntiga = document.getElementById('exp-nota-antiga').value.trim(); const slaPedidos = parseFloat(document.getElementById('slaPedidosPercentual').value) || 0; if (volume === '' && hs24 === '' && ontem === '' && depositante === '' && notaAntiga === '') { alert('Preencha pelo menos um campo!'); return; } const linhasPendencias = document.querySelectorAll('#corpo-tabela-pendencias-paletes tr'); const pendencias = []; linhasPendencias.forEach(linha => { const transportadora = linha.querySelector('.input-transportadora').value.trim(); const paletes = linha.querySelector('.input-paletes').value.trim(); if (transportadora !== '' || paletes !== '') { pendencias.push({ transportadora: transportadora || '-', paletes: paletes || '0' }); } }); const novoRegistro = { data: new Date().toLocaleString('pt-BR'), volume: volume || '0', hs24: hs24 || '0', ontem: ontem || '0', depositante: depositante || '-', notaAntiga: notaAntiga || '-', pendenciasPaletes: pendencias, slaPedidos: slaPedidos }; let historicoExp = JSON.parse(localStorage.getItem('historicoExpedicao')) || []; historicoExp.unshift(novoRegistro); if (historicoExp.length > 10) historicoExp = historicoExp.slice(0, 10); localStorage.setItem('historicoExpedicao', JSON.stringify(historicoExp)); document.getElementById('exp-volume').value = ''; document.getElementById('exp-24hs').value = ''; document.getElementById('exp-ontem').value = ''; document.getElementById('exp-depositante').value = ''; document.getElementById('exp-nota-antiga').value = ''; document.getElementById('slaPedidosPercentual').value = ''; const corpoPendencias = document.getElementById('corpo-tabela-pendencias-paletes'); corpoPendencias.innerHTML = `<tr><td><input type="text" class="input-transportadora" placeholder="Nome da transportadora"></td><td><input type="number" class="input-paletes" placeholder="0"></td><td></td></tr>`; alert('Expedição salva com sucesso!'); } catch (error) { console.error('Erro ao salvar expedição:', error); alert('Erro ao salvar: ' + error.message); } }
+function adicionarLinhaQualidade() { const corpo = document.getElementById('corpo-tabela-qualidade'); const contador = corpo.children.length + 1; const novaLinha = document.createElement('tr'); novaLinha.innerHTML = `<td><input type="number" class="input-qualidade-num" placeholder="${contador}"></td><td><input type="text" class="input-qualidade-assunto" placeholder="Digite o assunto"></td><td><button class="btn-remover-linha" onclick="removerLinhaQualidade(this)" style="width: 36px; height: 36px; font-size: 22px;">×</button></td>`; corpo.appendChild(novaLinha); }
+function removerLinhaQualidade(botao) { const corpo = document.getElementById('corpo-tabela-qualidade'); if (corpo.children.length > 1) { botao.closest('tr').remove(); const linhas = corpo.querySelectorAll('tr'); linhas.forEach((linha, index) => { const inputNum = linha.querySelector('.input-qualidade-num'); if (inputNum) inputNum.placeholder = index + 1; }); } else { alert('É necessário manter pelo menos uma linha!'); } }
+function salvarQualidade() { try { const linhas = document.querySelectorAll('#corpo-tabela-qualidade tr'); const registros = []; linhas.forEach(linha => { const numero = linha.querySelector('.input-qualidade-num').value.trim(); const assunto = linha.querySelector('.input-qualidade-assunto').value.trim(); if (numero !== '' || assunto !== '') { registros.push({ numero: numero || registros.length + 1, assunto: assunto || '-' }); } }); if (registros.length === 0) { alert('Preencha pelo menos um registro de qualidade!'); return; } const registroQualidade = { data: new Date().toLocaleString('pt-BR'), registros: registros }; localStorage.setItem('historicoQualidade', JSON.stringify(registroQualidade)); const corpo = document.getElementById('corpo-tabela-qualidade'); corpo.innerHTML = `<tr><td><input type="number" class="input-qualidade-num" placeholder="1"></td><td><input type="text" class="input-qualidade-assunto" placeholder="Digite o assunto"></td><td></td></tr>`; alert('Qualidade salva com sucesso!'); } catch (error) { console.error('Erro ao salvar qualidade:', error); alert('Erro ao salvar: ' + error.message); } }
+function adicionarLinhaRemanacoes() { const corpo = document.getElementById('corpo-tabela-remanacoes'); const novaLinha = document.createElement('tr'); novaLinha.innerHTML = `<td><input type="text" class="input-mes" placeholder="Ex: Janeiro"></td><td><input type="number" class="input-qtde-remanacoes" placeholder="0"></td><td><input type="number" class="input-procedentes" placeholder="0"></td><td><input type="number" class="input-improcedentes" placeholder="0"></td><td><input type="number" class="input-em-analise" placeholder="0"></td>`; corpo.appendChild(novaLinha); }
+function adicionarLinhaReclamacoes() { const corpo = document.getElementById('corpo-tabela-reclamacoes'); const novaLinha = document.createElement('tr'); novaLinha.innerHTML = `<td><input type="text" class="input-depositante-rec" placeholder="Nome do depositante"></td><td><input type="number" class="input-falta" placeholder="0"></td><td><input type="number" class="input-inversao" placeholder="0"></td><td><input type="number" class="input-sobra" placeholder="0"></td><td><input type="number" class="input-dano" placeholder="0"></td><td><button class="btn-remover-linha" onclick="removerLinhaReclamacoes(this)" style="width: 36px; height: 36px; font-size: 22px;">×</button></td>`; corpo.appendChild(novaLinha); }
+function removerLinhaReclamacoes(botao) { const corpo = document.getElementById('corpo-tabela-reclamacoes'); if (corpo.children.length > 1) { botao.closest('tr').remove(); } else { alert('É necessário manter pelo menos uma linha!'); } }
+function salvarFaleConosco() { try { const linhasRemanacoes = document.querySelectorAll('#corpo-tabela-remanacoes tr'); const remanacoes = []; linhasRemanacoes.forEach(linha => { const mes = linha.querySelector('.input-mes').value.trim(); const qtde = linha.querySelector('.input-qtde-remanacoes').value.trim(); const procedentes = linha.querySelector('.input-procedentes').value.trim(); const improcedentes = linha.querySelector('.input-improcedentes').value.trim(); const emAnalise = linha.querySelector('.input-em-analise').value.trim(); if (mes !== '' || qtde !== '') { remanacoes.push({ mes: mes || '-', qtdeRemanacoes: qtde || '0', procedentes: procedentes || '0', improcedentes: improcedentes || '0', emAnalise: emAnalise || '0' }); } }); const linhasReclamacoes = document.querySelectorAll('#corpo-tabela-reclamacoes tr'); const reclamacoes = []; linhasReclamacoes.forEach(linha => { const depositante = linha.querySelector('.input-depositante-rec').value.trim(); const falta = linha.querySelector('.input-falta').value.trim(); const inversao = linha.querySelector('.input-inversao').value.trim(); const sobra = linha.querySelector('.input-sobra').value.trim(); const dano = linha.querySelector('.input-dano').value.trim(); if (depositante !== '' || falta !== '' || inversao !== '' || sobra !== '' || dano !== '') { reclamacoes.push({ depositante: depositante || '-', falta: falta || '0', inversao: inversao || '0', sobra: sobra || '0', dano: dano || '0' }); } }); if (remanacoes.length === 0 && reclamacoes.length === 0) { alert('Preencha pelo menos um registro de remanações ou reclamações!'); return; } const registroFaleConosco = { data: new Date().toLocaleString('pt-BR'), remanacoes: remanacoes, reclamacoes: reclamacoes }; localStorage.setItem('historicoFaleConosco', JSON.stringify(registroFaleConosco)); const corpoRemanacoes = document.getElementById('corpo-tabela-remanacoes'); corpoRemanacoes.innerHTML = `<tr><td><input type="text" class="input-mes" placeholder="Ex: Janeiro"></td><td><input type="number" class="input-qtde-remanacoes" placeholder="0"></td><td><input type="number" class="input-procedentes" placeholder="0"></td><td><input type="number" class="input-improcedentes" placeholder="0"></td><td><input type="number" class="input-em-analise" placeholder="0"></td></tr>`; const corpoReclamacoes = document.getElementById('corpo-tabela-reclamacoes'); corpoReclamacoes.innerHTML = `<tr><td><input type="text" class="input-depositante-rec" placeholder="Nome do depositante"></td><td><input type="number" class="input-falta" placeholder="0"></td><td><input type="number" class="input-inversao" placeholder="0"></td><td><input type="number" class="input-sobra" placeholder="0"></td><td><input type="number" class="input-dano" placeholder="0"></td><td></td></tr>`; alert('Fale Conosco salvo com sucesso!'); } catch (error) { console.error('Erro ao salvar fale conosco:', error); alert('Erro ao salvar: ' + error.message); } }
+function adicionarLinhaCarrinho() { const corpo = document.getElementById('corpo-tabela-carrinho'); const novaLinha = document.createElement('tr'); novaLinha.innerHTML = `<td><input type="number" class="input-qtde-carrinho" placeholder="0" oninput="calcularTotalCarrinho()"></td><td><input type="text" class="input-depositante-carrinho" placeholder="Nome do depositante"></td><td><button class="btn-remover-linha-carrinho" onclick="removerLinhaCarrinho(this)">×</button></td>`; corpo.appendChild(novaLinha); }
+function removerLinhaCarrinho(botao) { const corpo = document.getElementById('corpo-tabela-carrinho'); if (corpo.children.length > 1) { botao.closest('tr').remove(); calcularTotalCarrinho(); } else { alert('É necessário manter pelo menos uma linha!'); } }
+function calcularTotalCarrinho() { const inputs = document.querySelectorAll('.input-qtde-carrinho'); let total = 0; inputs.forEach(input => { total += parseInt(input.value) || 0; }); document.getElementById('sep-total-carrinho').value = total; }
+function salvarSeparacao() { try { const pickingOndas = document.getElementById('sep-picking-ondas').value.trim(); const pickingPecas = document.getElementById('sep-picking-pecas').value.trim(); const pulmaoOndas = document.getElementById('sep-pulmao-ondas').value.trim(); const pulmaoPecas = document.getElementById('sep-pulmao-pecas').value.trim(); const remanejamento = document.getElementById('sep-remanejamento').value.trim(); const totalCarrinho = document.getElementById('sep-total-carrinho').value.trim(); if (pickingOndas === '' && pickingPecas === '' && pulmaoOndas === '' && pulmaoPecas === '' && remanejamento === '') { alert('Preencha pelo menos um campo!'); return; } const linhasCarrinho = document.querySelectorAll('#corpo-tabela-carrinho tr'); const carrinhos = []; linhasCarrinho.forEach(linha => { const qtde = linha.querySelector('.input-qtde-carrinho').value.trim(); const depositante = linha.querySelector('.input-depositante-carrinho').value.trim(); if (qtde !== '' || depositante !== '') { carrinhos.push({ qtde: qtde || '0', depositante: depositante || '-' }); } }); const novoRegistro = { data: new Date().toLocaleString('pt-BR'), pickingOndas: pickingOndas || '0', pickingPecas: pickingPecas || '0', pulmaoOndas: pulmaoOndas || '0', pulmaoPecas: pulmaoPecas || '0', remanejamento: remanejamento || '0', totalCarrinho: totalCarrinho || '0', carrinhos: carrinhos }; let historicoSep = JSON.parse(localStorage.getItem('historicoSeparacao')) || []; historicoSep.unshift(novoRegistro); if (historicoSep.length > 10) historicoSep = historicoSep.slice(0, 10); localStorage.setItem('historicoSeparacao', JSON.stringify(historicoSep)); document.getElementById('sep-picking-ondas').value = ''; document.getElementById('sep-picking-pecas').value = ''; document.getElementById('sep-pulmao-ondas').value = ''; document.getElementById('sep-pulmao-pecas').value = ''; document.getElementById('sep-remanejamento').value = ''; document.getElementById('sep-total-carrinho').value = ''; const corpoCarrinho = document.getElementById('corpo-tabela-carrinho'); corpoCarrinho.innerHTML = `<tr><td><input type="number" class="input-qtde-carrinho" placeholder="0" oninput("calcularTotalCarrinho()")></td><td><input type="text" class="input-depositante-carrinho" placeholder="Nome do depositante"></td><td></td></tr>`; alert('Separação salva com sucesso!'); } catch (error) { console.error('Erro ao salvar separação:', error); alert('Erro ao salvar: ' + error.message); } }
+function calcularCorSLA(valor) { if (valor <= 86) return '#e74c3c'; if (valor <= 97) return '#f1c40f'; return '#27ae60'; }
+function calcularStatusSLA(valor) { if (valor <= 86) return 'CRÍTICO'; if (valor <= 97) return 'ATENÇÃO'; return 'EXCELENTE'; }
+function calcularAnguloAgulha(valor) { return -90 + (valor / 100) * 180; }
+function calcularDashArray(valor) { const circunferencia = 283; const preenchimento = (valor / 100) * circunferencia; return `${preenchimento} ${circunferencia}`; }
+function atualizarPreviewSLA() { const valor = parseFloat(document.getElementById('slaPercentual').value) || 0; const valorLimitado = Math.min(100, Math.max(0, valor)); const cor = calcularCorSLA(valorLimitado); const angulo = calcularAnguloAgulha(valorLimitado); const dashArray = calcularDashArray(valorLimitado); document.getElementById('sla-preview-arc').setAttribute('stroke', cor); document.getElementById('sla-preview-arc').setAttribute('stroke-dasharray', dashArray); document.getElementById('sla-preview-agulha').style.transform = `rotate(${angulo}deg)`; }
+function atualizarGaugePainel(valor) { const valorLimitado = Math.min(100, Math.max(0, valor)); const cor = calcularCorSLA(valorLimitado); const angulo = calcularAnguloAgulha(valorLimitado); const dashArray = calcularDashArray(valorLimitado); const status = calcularStatusSLA(valorLimitado); document.getElementById('sla-arc-fill').setAttribute('stroke', cor); document.getElementById('sla-arc-fill').setAttribute('stroke-dasharray', dashArray); document.getElementById('sla-agulha-painel').style.transform = `rotate(${angulo}deg)`; document.getElementById('sla-valor-painel').textContent = valorLimitado.toFixed(2).replace('.', ',') + '%'; document.getElementById('sla-valor-painel').style.color = cor; document.getElementById('sla-status-painel').textContent = status; document.getElementById('sla-status-painel').style.color = cor; }
+function atualizarPreviewSLAPedidos() { const valor = parseFloat(document.getElementById('slaPedidosPercentual').value) || 0; const valorLimitado = Math.min(100, Math.max(0, valor)); const cor = calcularCorSLA(valorLimitado); const angulo = calcularAnguloAgulha(valorLimitado); const dashArray = calcularDashArray(valorLimitado); document.getElementById('sla-pedidos-preview-arc').setAttribute('stroke', cor); document.getElementById('sla-pedidos-preview-arc').setAttribute('stroke-dasharray', dashArray); document.getElementById('sla-pedidos-preview-agulha').style.transform = `rotate(${angulo}deg)`; }
+function salvarRecebimento() { const camposOr = document.querySelectorAll('.input-or-antiga'); const orsAntigas = Array.from(camposOr).map(input => input.value.trim()).filter(valor => valor !== '').join(', '); const slaValor = parseFloat(document.getElementById('slaPercentual').value) || 0; const registro = { data: new Date().toLocaleString('pt-BR'), totalGrafica: document.getElementById('totalGrafica').value || '0', totalDevolucao: document.getElementById('totalDevolucao').value || '0', confGrafica: document.getElementById('confGrafica').value || '0', confDevolucao: document.getElementById('confDevolucao').value || '0', alocGrafica: document.getElementById('alocGrafica').value || '0', alocDevolucao: document.getElementById('alocDevolucao').value || '0', divGrafica: document.getElementById('divGrafica').value || '0', divDevolucao: document.getElementById('divDevolucao').value || '0', cliGrafica: document.getElementById('cliGrafica').value || '0', cliDevolucao: document.getElementById('cliDevolucao').value || '0', digitado: coletarLinhas('Digitado'), pendente: coletarLinhas('Pendente'), agDia: coletarLinhas('Ag. Dia'), precupacao: coletarLinhas('Precupação'), slaPercentual: slaValor, orsAntigas: orsAntigas || '-' }; let historico = JSON.parse(localStorage.getItem('historicoRecebimento')) || []; historico.unshift(registro); localStorage.setItem('historicoRecebimento', JSON.stringify(historico)); document.querySelectorAll('#tela-recebimento input').forEach(input => input.value = ''); resetarLinhasDinamicas(); alert('Dados salvos com sucesso!'); }
+function resetarLinhasDinamicas() { const grupo = document.getElementById('grupo-linhas'); grupo.innerHTML = `<div class="linha-dinamica" data-tipo="Digitado"><span class="linha-label">Digitado</span><input type="number" class="linha-input-num" placeholder="0"><input type="text" class="linha-input-text" placeholder="Ex: 123 ou ABC"><button class="btn-add-linha" onclick="adicionarLinha('Digitado')">+</button></div><div class="linha-dinamica" data-tipo="Pendente"><span class="linha-label">Pendente</span><input type="number" class="linha-input-num" placeholder="0"><input type="text" class="linha-input-text" placeholder="Ex: 123 ou ABC"><button class="btn-add-linha" onclick="adicionarLinha('Pendente')">+</button></div><div class="linha-dinamica" data-tipo="Ag. Dia"><span class="linha-label">Ag. Dia</span><input type="number" class="linha-input-num" placeholder="0"><input type="text" class="linha-input-text" placeholder="Ex: 123 ou ABC"><button class="btn-add-linha" onclick="adicionarLinha('Ag. Dia')">+</button></div><div class="linha-dinamica" data-tipo="Precupação"><span class="linha-label">Precupação</span><input type="number" class="linha-input-num" placeholder="0"><input type="text" class="linha-input-text" placeholder="Ex: 123 ou ABC"><button class="btn-add-linha" onclick="adicionarLinha('Precupação')">+</button></div>`; }
+function somarLinhas(arr) { if (!arr || arr.length === 0) return 0; let total = 0; arr.forEach(item => { const num = parseInt(item.split('|')[0]) || 0; total += num; }); return total; }
+function calcularTendencia(valorAtual, valorAnterior) { const atual = parseInt(valorAtual) || 0; const anterior = parseInt(valorAnterior) || 0; if (atual > anterior) { return '<span class="tendencia-up">↑</span>'; } else if (atual < anterior) { return '<span class="tendencia-down">↓</span>'; } else { return '<span class="tendencia-neutral">→</span>'; } }
+function calcularTendenciaExp(valorAtual, valorAnterior) { const atual = parseInt(valorAtual) || 0; const anterior = parseInt(valorAnterior) || 0; if (atual > anterior) { return '<span class="tendencia-exp-up">↑</span>'; } else if (atual < anterior) { return '<span class="tendencia-exp-down">↓</span>'; } else { return '<span class="tendencia-exp-neutral">→</span>'; } }
+function formatarDetalhes(arr) { if (!arr || arr.length === 0) return '<div style="color: #7fb3d5; font-size: 14px; text-align: center; padding: 10px;">Nenhum registro</div>'; return arr.map(item => { const partes = item.split('|'); const num = partes[0] || '0'; const txt = partes[1] || '-'; return `<div class="card-detalhe-item"><span class="card-detalhe-num">${num}</span><span class="card-detalhe-texto">${txt}</span></div>`; }).join(''); }
+
+// FUNÇÃO DE CONSULTA DE DATAS
+function carregarConsultaSemana() {
+    const lista = document.getElementById('lista-datas-semana');
+    lista.innerHTML = '';
+    const hoje = new Date();
+    const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+    
+    for (let i = 0; i < 7; i++) {
+        const data = new Date(hoje);
+        data.setDate(hoje.getDate() - i);
+        const diaSemana = diasSemana[data.getDay()];
+        const dataStr = data.toLocaleDateString('pt-BR');
+        
+        if (data.getDay() === 0 || data.getDay() === 6) continue;
+        
+        const temDados = verificarDadosData(dataStr);
+        const btn = document.createElement('button');
+        btn.className = 'btn-dia-semana' + (temDados ? '' : ' sem-dados');
+        btn.innerHTML = `<span>${diaSemana} - ${dataStr}</span><span>${temDados ? '✓' : '✗'}</span>`;
+        btn.onclick = () => carregarPainelData(dataStr);
+        lista.appendChild(btn);
+    }
+}
+
+function verificarDadosData(dataStr) {
+    const chaves = ['historicoRecebimento', 'historicoRetrabalho', 'historicoInventario', 'historicoExpedicao', 'historicoQualidade', 'historicoFaleConosco', 'historicoSeparacao'];
+    for (let chave of chaves) {
+        const dados = JSON.parse(localStorage.getItem(chave) || '[]');
+        if (Array.isArray(dados)) {
+            for (let item of dados) {
+                if (item.data && item.data.startsWith(dataStr)) return true;
+            }
+        } else if (dados && dados.data && dados.data.startsWith(dataStr)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function carregarPainelData(dataStr) {
+    const dadosRecebimento = JSON.parse(localStorage.getItem('historicoRecebimento') || '[]');
+    const dadosRetrabalho = JSON.parse(localStorage.getItem('historicoRetrabalho') || 'null');
+    const dadosInventario = JSON.parse(localStorage.getItem('historicoInventario') || 'null');
+    const dadosExpedicao = JSON.parse(localStorage.getItem('historicoExpedicao') || '[]');
+    const dadosQualidade = JSON.parse(localStorage.getItem('historicoQualidade') || 'null');
+    const dadosFaleConosco = JSON.parse(localStorage.getItem('historicoFaleConosco') || 'null');
+    const dadosSeparacao = JSON.parse(localStorage.getItem('historicoSeparacao') || '[]');
+    
+    const itemRecebimento = Array.isArray(dadosRecebimento) ? dadosRecebimento.find(item => item.data && item.data.startsWith(dataStr)) : null;
+    const itemExpedicao = Array.isArray(dadosExpedicao) ? dadosExpedicao.find(item => item.data && item.data.startsWith(dataStr)) : null;
+    const itemSeparacao = Array.isArray(dadosSeparacao) ? dadosSeparacao.find(item => item.data && item.data.startsWith(dataStr)) : null;
+    
+    // Esconder relógio quando for consulta de data
+    document.getElementById('relogio-container').style.display = 'none';
+    
+    if (itemRecebimento) {
+        document.getElementById('card-total-grafica').textContent = itemRecebimento.totalGrafica || '0';
+        document.getElementById('card-total-devolucao').textContent = itemRecebimento.totalDevolucao || '0';
+        document.getElementById('card-conf-grafica').textContent = itemRecebimento.confGrafica || '0';
+        document.getElementById('card-conf-devolucao').textContent = itemRecebimento.confDevolucao || '0';
+        document.getElementById('card-aloc-grafica').textContent = itemRecebimento.alocGrafica || '0';
+        document.getElementById('card-aloc-devolucao').textContent = itemRecebimento.alocDevolucao || '0';
+        document.getElementById('card-div-grafica').textContent = itemRecebimento.divGrafica || '0';
+        document.getElementById('card-div-devolucao').textContent = itemRecebimento.divDevolucao || '0';
+        document.getElementById('card-cli-grafica').textContent = itemRecebimento.cliGrafica || '0';
+        document.getElementById('card-cli-devolucao').textContent = itemRecebimento.cliDevolucao || '0';
+        document.getElementById('card-dig-total').textContent = somarLinhas(itemRecebimento.digitado);
+        document.getElementById('card-pend-total').textContent = somarLinhas(itemRecebimento.pendente);
+        document.getElementById('card-ag-total').textContent = somarLinhas(itemRecebimento.agDia);
+        document.getElementById('card-prec-total').textContent = somarLinhas(itemRecebimento.precupacao);
+        document.getElementById('card-dig-detalhes').innerHTML = formatarDetalhes(itemRecebimento.digitado);
+        document.getElementById('card-pend-detalhes').innerHTML = formatarDetalhes(itemRecebimento.pendente);
+        document.getElementById('card-ag-detalhes').innerHTML = formatarDetalhes(itemRecebimento.agDia);
+        document.getElementById('card-prec-detalhes').innerHTML = formatarDetalhes(itemRecebimento.precupacao);
+        document.getElementById('card-ors-antigas').textContent = itemRecebimento.orsAntigas || '-';
+        atualizarGaugePainel(itemRecebimento.slaPercentual || 0);
+    }
+    
+    if (dadosRetrabalho && dadosRetrabalho.data && dadosRetrabalho.data.startsWith(dataStr)) {
+        document.getElementById('corpo-tabela-retrabalho-painel').innerHTML = '';
+        if (dadosRetrabalho.registros) {
+            dadosRetrabalho.registros.forEach(item => {
+                document.getElementById('corpo-tabela-retrabalho-painel').innerHTML += `<tr><td>${item.depositante}</td><td>${item.descricao}</td></tr>`;
+            });
+        }
+    }
+    
+    if (dadosInventario && dadosInventario.data && dadosInventario.data.startsWith(dataStr)) {
+        document.getElementById('corpo-tabela-inventario-painel').innerHTML = '';
+        if (dadosInventario.registrosInventario) {
+            dadosInventario.registrosInventario.forEach(item => {
+                document.getElementById('corpo-tabela-inventario-painel').innerHTML += `<tr><td>${item.depositante}</td><td>${item.tt}</td><td>${item.contado}</td><td>${item.evolucao}</td><td>${item.ila}</td><td>${item.acuracia}</td></tr>`;
+            });
+        }
+        if (dadosInventario.qtdPaletes && dadosInventario.qtdPaletes !== '0') {
+            document.getElementById('paletes-no-inventario').style.display = 'block';
+            document.getElementById('qtd-paletes-valor').textContent = dadosInventario.qtdPaletes;
+        } else {
+            document.getElementById('paletes-no-inventario').style.display = 'none';
+        }
+    }
+    
+    if (itemExpedicao) {
+        document.getElementById('card-exp-volume').textContent = itemExpedicao.volume || '0';
+        document.getElementById('card-exp-24hs').textContent = itemExpedicao.hs24 || '0';
+        document.getElementById('card-exp-ontem').textContent = itemExpedicao.ontem || '0';
+        document.getElementById('card-exp-depositante').textContent = itemExpedicao.depositante || '-';
+        document.getElementById('card-exp-nota-antiga').textContent = itemExpedicao.notaAntiga || '-';
+        if (itemExpedicao.slaPedidos !== undefined) {
+            const slaPedidosValor = itemExpedicao.slaPedidos || 0;
+            const cor = calcularCorSLA(slaPedidosValor);
+            const angulo = calcularAnguloAgulha(slaPedidosValor);
+            const dashArray = calcularDashArray(slaPedidosValor);
+            const status = calcularStatusSLA(slaPedidosValor);
+            document.getElementById('sla-pedidos-arc-fill').setAttribute('stroke', cor);
+            document.getElementById('sla-pedidos-arc-fill').setAttribute('stroke-dasharray', dashArray);
+            document.getElementById('sla-pedidos-agulha-painel').style.transform = `rotate(${angulo}deg)`;
+            document.getElementById('sla-pedidos-valor-painel').textContent = slaPedidosValor.toFixed(2).replace('.', ',') + '%';
+            document.getElementById('sla-pedidos-valor-painel').style.color = cor;
+            document.getElementById('sla-pedidos-status-painel').textContent = status;
+            document.getElementById('sla-pedidos-status-painel').style.color = cor;
+        }
+        if (itemExpedicao.pendenciasPaletes && itemExpedicao.pendenciasPaletes.length > 0) {
+            document.getElementById('corpo-tabela-pendencias-painel').innerHTML = '';
+            itemExpedicao.pendenciasPaletes.forEach(item => {
+                document.getElementById('corpo-tabela-pendencias-painel').innerHTML += `<tr><td>${item.transportadora}</td><td>${item.paletes}</td></tr>`;
+            });
+        }
+    }
+    
+    if (dadosQualidade && dadosQualidade.data && dadosQualidade.data.startsWith(dataStr)) {
+        document.getElementById('grid-qualidade-painel').innerHTML = '';
+        if (dadosQualidade.registros) {
+            dadosQualidade.registros.forEach(item => {
+                document.getElementById('grid-qualidade-painel').innerHTML += `<div class="card-qualidade-item"><div class="card-qualidade-numero">Nº ${item.numero}</div><div class="card-qualidade-assunto">${item.assunto}</div></div>`;
+            });
+        }
+    }
+    
+    if (dadosFaleConosco && dadosFaleConosco.data && dadosFaleConosco.data.startsWith(dataStr)) {
+        let totalRemanacoes = 0, totalProcedentes = 0, totalImprocedentes = 0, totalEmAnalise = 0;
+        if (dadosFaleConosco.remanacoes) {
+            dadosFaleConosco.remanacoes.forEach(item => {
+                totalRemanacoes += parseInt(item.qtdeRemanacoes) || 0;
+                totalProcedentes += parseInt(item.procedentes) || 0;
+                totalImprocedentes += parseInt(item.improcedentes) || 0;
+                totalEmAnalise += parseInt(item.emAnalise) || 0;
+            });
+        }
+        document.getElementById('fc-total-remanacoes').textContent = totalRemanacoes;
+        document.getElementById('fc-total-procedentes').textContent = totalProcedentes;
+        document.getElementById('fc-total-improcedentes').textContent = totalImprocedentes;
+        document.getElementById('fc-total-em-analise').textContent = totalEmAnalise;
+        document.getElementById('corpo-tabela-reclamacoes-painel').innerHTML = '';
+        document.getElementById('grafico-reclamacoes').innerHTML = '';
+        if (dadosFaleConosco.reclamacoes) {
+            let maxTotal = 0;
+            dadosFaleConosco.reclamacoes.forEach(item => {
+                const total = (parseInt(item.falta) || 0) + (parseInt(item.inversao) || 0) + (parseInt(item.sobra) || 0) + (parseInt(item.dano) || 0);
+                if (total > maxTotal) maxTotal = total;
+            });
+            dadosFaleConosco.reclamacoes.forEach(item => {
+                const total = (parseInt(item.falta) || 0) + (parseInt(item.inversao) || 0) + (parseInt(item.sobra) || 0) + (parseInt(item.dano) || 0);
+                document.getElementById('corpo-tabela-reclamacoes-painel').innerHTML += `<tr><td>${item.depositante}</td><td>${item.falta}</td><td>${item.inversao}</td><td>${item.sobra}</td><td>${item.dano}</td><td><strong>${total}</strong></td></tr>`;
+                const larguraBarra = maxTotal > 0 ? (total / maxTotal) * 100 : 0;
+                document.getElementById('grafico-reclamacoes').innerHTML += `<div class="barra-item"><div class="barra-label">${item.depositante}</div><div class="barra-container"><div class="barra-fill" style="width: ${larguraBarra}%"><span class="barra-valor">${total}</span></div></div></div>`;
+            });
+        }
+    }
+    
+    if (itemSeparacao) {
+        document.getElementById('card-sep-picking-ondas').textContent = itemSeparacao.pickingOndas || '0';
+        document.getElementById('card-sep-picking-pecas').textContent = itemSeparacao.pickingPecas || '0';
+        document.getElementById('card-sep-remanejamento').textContent = itemSeparacao.remanejamento || '0';
+        document.getElementById('card-sep-pulmao-ondas').textContent = itemSeparacao.pulmaoOndas || '0';
+        document.getElementById('card-sep-pulmao-pecas').textContent = itemSeparacao.pulmaoPecas || '0';
+        document.getElementById('card-sep-total-carrinho').textContent = itemSeparacao.totalCarrinho || '0';
+        if (itemSeparacao.carrinhos && itemSeparacao.carrinhos.length > 0) {
+            document.getElementById('corpo-tabela-carrinho-painel').innerHTML = '';
+            itemSeparacao.carrinhos.forEach(item => {
+                document.getElementById('corpo-tabela-carrinho-painel').innerHTML += `<tr><td>${item.qtde}</td><td>${item.depositante}</td></tr>`;
+            });
+        }
+    }
+    
+    mostrarTela('tela-painel');
+}
+
+function carregarDadosPainel() { const historico = JSON.parse(localStorage.getItem('historicoRecebimento')) || []; const msgVazia = document.getElementById('msg-vazia-painel'); const gridPrincipal = document.getElementById('grid-principal'); const gridSecundario = document.getElementById('grid-secundario'); const cardOrAntiga = document.getElementById('card-or-antiga-container'); const cardSla = document.getElementById('card-sla-container'); if (historico.length === 0) { gridPrincipal.style.display = 'none'; gridSecundario.style.display = 'none'; cardOrAntiga.style.display = 'none'; cardSla.style.display = 'none'; msgVazia.style.display = 'block'; } else { gridPrincipal.style.display = 'grid'; gridSecundario.style.display = 'grid'; cardOrAntiga.style.display = 'flex'; cardSla.style.display = 'flex'; msgVazia.style.display = 'none'; const ultimo = historico[0]; const anterior = historico.length > 1 ? historico[1] : null; document.getElementById('card-total-grafica').textContent = ultimo.totalGrafica || '0'; document.getElementById('card-total-devolucao').textContent = ultimo.totalDevolucao || '0'; document.getElementById('card-conf-grafica').textContent = ultimo.confGrafica || '0'; document.getElementById('card-conf-devolucao').textContent = ultimo.confDevolucao || '0'; document.getElementById('card-aloc-grafica').textContent = ultimo.alocGrafica || '0'; document.getElementById('card-aloc-devolucao').textContent = ultimo.alocDevolucao || '0'; document.getElementById('card-div-grafica').textContent = ultimo.divGrafica || '0'; document.getElementById('card-div-devolucao').textContent = ultimo.divDevolucao || '0'; document.getElementById('card-cli-grafica').textContent = ultimo.cliGrafica || '0'; document.getElementById('card-cli-devolucao').textContent = ultimo.cliDevolucao || '0'; if (anterior) { document.getElementById('tend-total-grafica').innerHTML = calcularTendencia(ultimo.totalGrafica, anterior.totalGrafica); document.getElementById('tend-total-devolucao').innerHTML = calcularTendencia(ultimo.totalDevolucao, anterior.totalDevolucao); } else { document.getElementById('tend-total-grafica').innerHTML = ''; document.getElementById('tend-total-devolucao').innerHTML = ''; } document.getElementById('card-dig-total').textContent = somarLinhas(ultimo.digitado); document.getElementById('card-pend-total').textContent = somarLinhas(ultimo.pendente); document.getElementById('card-ag-total').textContent = somarLinhas(ultimo.agDia); document.getElementById('card-prec-total').textContent = somarLinhas(ultimo.precupacao); document.getElementById('card-dig-detalhes').innerHTML = formatarDetalhes(ultimo.digitado); document.getElementById('card-pend-detalhes').innerHTML = formatarDetalhes(ultimo.pendente); document.getElementById('card-ag-detalhes').innerHTML = formatarDetalhes(ultimo.agDia); document.getElementById('card-prec-detalhes').innerHTML = formatarDetalhes(ultimo.precupacao); document.getElementById('card-ors-antigas').textContent = ultimo.orsAntigas || '-'; atualizarGaugePainel(ultimo.slaPercentual || 0); } carregarRetrabalhoPainel(); carregarInventarioPainel(); carregarExpedicaoPainel(); carregarQualidadePainel(); carregarFaleConoscoPainel(); carregarSeparacaoPainel(); }
+function carregarRetrabalhoPainel() { const dadosRetrabalho = JSON.parse(localStorage.getItem('historicoRetrabalho')); const secaoRetrabalho = document.getElementById('secao-retrabalho-painel'); const tabelaPainel = document.getElementById('tabela-retrabalho-painel'); const corpoTabela = document.getElementById('corpo-tabela-retrabalho-painel'); const msgVazia = document.getElementById('msg-vazia-retrabalho'); const dataPainel = document.getElementById('retrabalho-data-painel'); if (!dadosRetrabalho || !dadosRetrabalho.registros || dadosRetrabalho.registros.length === 0) { secaoRetrabalho.style.display = 'none'; return; } secaoRetrabalho.style.display = 'block'; tabelaPainel.style.display = 'table'; msgVazia.style.display = 'none'; dataPainel.textContent = `Última atualização: ${dadosRetrabalho.data}`; corpoTabela.innerHTML = ''; dadosRetrabalho.registros.forEach(item => { corpoTabela.innerHTML += `<tr><td>${item.depositante}</td><td>${item.descricao}</td></tr>`; }); }
+function carregarInventarioPainel() { const dadosInventario = JSON.parse(localStorage.getItem('historicoInventario')); const secaoInventario = document.getElementById('secao-inventario-painel'); const tabelaPainel = document.getElementById('tabela-inventario-painel'); const corpoTabela = document.getElementById('corpo-tabela-inventario-painel'); const msgVazia = document.getElementById('msg-vazia-inventario'); const dataPainel = document.getElementById('inventario-data-painel'); const paletesDiv = document.getElementById('paletes-no-inventario'); const qtdPaletesValor = document.getElementById('qtd-paletes-valor'); if (!dadosInventario || (!dadosInventario.registrosInventario || dadosInventario.registrosInventario.length === 0) && (!dadosInventario.qtdPaletes || dadosInventario.qtdPaletes === '0')) { secaoInventario.style.display = 'none'; return; } secaoInventario.style.display = 'block'; tabelaPainel.style.display = 'table'; msgVazia.style.display = 'none'; dataPainel.textContent = `Última atualização: ${dadosInventario.data}`; if (dadosInventario.registrosInventario && dadosInventario.registrosInventario.length > 0) { corpoTabela.innerHTML = ''; dadosInventario.registrosInventario.forEach(item => { corpoTabela.innerHTML += `<tr><td>${item.depositante}</td><td>${item.tt}</td><td>${item.contado}</td><td>${item.evolucao}</td><td>${item.ila}</td><td>${item.acuracia}</td></tr>`; }); } else { corpoTabela.innerHTML = '<tr><td colspan="6" style="color: #7fb3d5; font-style: italic;">Nenhum registro de inventário</td></tr>'; } if (dadosInventario.qtdPaletes && dadosInventario.qtdPaletes !== '0') { paletesDiv.style.display = 'block'; qtdPaletesValor.textContent = dadosInventario.qtdPaletes; } else { paletesDiv.style.display = 'none'; } }
+function carregarExpedicaoPainel() { const historicoExp = JSON.parse(localStorage.getItem('historicoExpedicao')) || []; const secaoExpedicao = document.getElementById('secao-expedicao-painel'); const dataPainel = document.getElementById('expedicao-data-painel'); const pendenciasDiv = document.getElementById('pendencias-paletes-painel'); const corpoPendencias = document.getElementById('corpo-tabela-pendencias-painel'); if (!historicoExp || historicoExp.length === 0) { secaoExpedicao.style.display = 'none'; return; } secaoExpedicao.style.display = 'block'; const ultimo = historicoExp[0]; const anterior = historicoExp.length > 1 ? historicoExp[1] : null; dataPainel.textContent = `Última atualização: ${ultimo.data}`; document.getElementById('card-exp-volume').textContent = ultimo.volume || '0'; document.getElementById('card-exp-24hs').textContent = ultimo.hs24 || '0'; document.getElementById('card-exp-ontem').textContent = ultimo.ontem || '0'; document.getElementById('card-exp-depositante').textContent = ultimo.depositante || '-'; document.getElementById('card-exp-nota-antiga').textContent = ultimo.notaAntiga || '-'; if (anterior) { document.getElementById('tend-exp-volume').innerHTML = calcularTendenciaExp(ultimo.volume, anterior.volume); document.getElementById('tend-exp-24hs').innerHTML = calcularTendenciaExp(ultimo.hs24, anterior.hs24); document.getElementById('tend-exp-ontem').innerHTML = calcularTendenciaExp(ultimo.ontem, anterior.ontem); } else { document.getElementById('tend-exp-volume').innerHTML = ''; document.getElementById('tend-exp-24hs').innerHTML = ''; document.getElementById('tend-exp-ontem').innerHTML = ''; } if (ultimo.pendenciasPaletes && ultimo.pendenciasPaletes.length > 0) { pendenciasDiv.style.display = 'block'; corpoPendencias.innerHTML = ''; ultimo.pendenciasPaletes.forEach(item => { corpoPendencias.innerHTML += `<tr><td>${item.transportadora}</td><td>${item.paletes}</td></tr>`; }); } else { pendenciasDiv.style.display = 'none'; } if (ultimo.slaPedidos !== undefined) { const slaPedidosValor = ultimo.slaPedidos || 0; const cor = calcularCorSLA(slaPedidosValor); const angulo = calcularAnguloAgulha(slaPedidosValor); const dashArray = calcularDashArray(slaPedidosValor); const status = calcularStatusSLA(slaPedidosValor); document.getElementById('sla-pedidos-arc-fill').setAttribute('stroke', cor); document.getElementById('sla-pedidos-arc-fill').setAttribute('stroke-dasharray', dashArray); document.getElementById('sla-pedidos-agulha-painel').style.transform = `rotate(${angulo}deg)`; document.getElementById('sla-pedidos-valor-painel').textContent = slaPedidosValor.toFixed(2).replace('.', ',') + '%'; document.getElementById('sla-pedidos-valor-painel').style.color = cor; document.getElementById('sla-pedidos-status-painel').textContent = status; document.getElementById('sla-pedidos-status-painel').style.color = cor; } }
+function carregarQualidadePainel() { const dadosQualidade = JSON.parse(localStorage.getItem('historicoQualidade')); const secaoQualidade = document.getElementById('secao-qualidade-painel'); const gridQualidade = document.getElementById('grid-qualidade-painel'); const msgVazia = document.getElementById('msg-vazia-qualidade'); const dataPainel = document.getElementById('qualidade-data-painel'); if (!dadosQualidade || !dadosQualidade.registros || dadosQualidade.registros.length === 0) { secaoQualidade.style.display = 'none'; return; } secaoQualidade.style.display = 'block'; gridQualidade.innerHTML = ''; msgVazia.style.display = 'none'; dataPainel.textContent = `Última atualização: ${dadosQualidade.data}`; dadosQualidade.registros.forEach(item => { const card = document.createElement('div'); card.className = 'card-qualidade-item'; card.innerHTML = `<div class="card-qualidade-numero">Nº ${item.numero}</div><div class="card-qualidade-assunto">${item.assunto}</div>`; gridQualidade.appendChild(card); }); }
+function carregarFaleConoscoPainel() { const dadosFC = JSON.parse(localStorage.getItem('historicoFaleConosco')); const secaoFC = document.getElementById('secao-faleconosco-painel'); const msgVazia = document.getElementById('msg-vazia-faleconosco'); const dataPainel = document.getElementById('faleconosco-data-painel'); const corpoTabelaReclamacoes = document.getElementById('corpo-tabela-reclamacoes-painel'); const graficoContainer = document.getElementById('grafico-reclamacoes'); if (!dadosFC || (!dadosFC.remanacoes || dadosFC.remanacoes.length === 0) && (!dadosFC.reclamacoes || dadosFC.reclamacoes.length === 0)) { secaoFC.style.display = 'none'; return; } secaoFC.style.display = 'block'; msgVazia.style.display = 'none'; dataPainel.textContent = `Última atualização: ${dadosFC.data}`; let totalRemanacoes = 0, totalProcedentes = 0, totalImprocedentes = 0, totalEmAnalise = 0; if (dadosFC.remanacoes && dadosFC.remanacoes.length > 0) { dadosFC.remanacoes.forEach(item => { totalRemanacoes += parseInt(item.qtdeRemanacoes) || 0; totalProcedentes += parseInt(item.procedentes) || 0; totalImprocedentes += parseInt(item.improcedentes) || 0; totalEmAnalise += parseInt(item.emAnalise) || 0; }); } document.getElementById('fc-total-remanacoes').textContent = totalRemanacoes; document.getElementById('fc-total-procedentes').textContent = totalProcedentes; document.getElementById('fc-total-improcedentes').textContent = totalImprocedentes; document.getElementById('fc-total-em-analise').textContent = totalEmAnalise; if (dadosFC.reclamacoes && dadosFC.reclamacoes.length > 0) { corpoTabelaReclamacoes.innerHTML = ''; graficoContainer.innerHTML = ''; let maxTotal = 0; dadosFC.reclamacoes.forEach(item => { const total = (parseInt(item.falta) || 0) + (parseInt(item.inversao) || 0) + (parseInt(item.sobra) || 0) + (parseInt(item.dano) || 0); if (total > maxTotal) maxTotal = total; }); dadosFC.reclamacoes.forEach(item => { const total = (parseInt(item.falta) || 0) + (parseInt(item.inversao) || 0) + (parseInt(item.sobra) || 0) + (parseInt(item.dano) || 0); corpoTabelaReclamacoes.innerHTML += `<tr><td>${item.depositante}</td><td>${item.falta}</td><td>${item.inversao}</td><td>${item.sobra}</td><td>${item.dano}</td><td><strong>${total}</strong></td></tr>`; const larguraBarra = maxTotal > 0 ? (total / maxTotal) * 100 : 0; const barraItem = document.createElement('div'); barraItem.className = 'barra-item'; barraItem.innerHTML = `<div class="barra-label">${item.depositante}</div><div class="barra-container"><div class="barra-fill" style="width: ${larguraBarra}%"><span class="barra-valor">${total}</span></div></div>`; graficoContainer.appendChild(barraItem); }); } else { corpoTabelaReclamacoes.innerHTML = '<tr><td colspan="6" style="color: #7fb3d5; font-style: italic;">Nenhuma reclamação registrada</td></tr>'; graficoContainer.innerHTML = '<p style="color: #7fb3d5; text-align: center; padding: 20px;">Nenhuma reclamação registrada</p>'; } }
+function carregarSeparacaoPainel() { const historicoSep = JSON.parse(localStorage.getItem('historicoSeparacao')) || []; const secaoSeparacao = document.getElementById('secao-separacao-painel'); const dataPainel = document.getElementById('separacao-data-painel'); const carrinhosDiv = document.getElementById('carrinhos-por-depositante-painel'); const corpoCarrinhos = document.getElementById('corpo-tabela-carrinho-painel'); if (!historicoSep || historicoSep.length === 0) { secaoSeparacao.style.display = 'none'; return; } secaoSeparacao.style.display = 'block'; const ultimo = historicoSep[0]; dataPainel.textContent = `Última atualização: ${ultimo.data}`; document.getElementById('card-sep-picking-ondas').textContent = ultimo.pickingOndas || '0'; document.getElementById('card-sep-picking-pecas').textContent = ultimo.pickingPecas || '0'; document.getElementById('card-sep-remanejamento').textContent = ultimo.remanejamento || '0'; document.getElementById('card-sep-pulmao-ondas').textContent = ultimo.pulmaoOndas || '0'; document.getElementById('card-sep-pulmao-pecas').textContent = ultimo.pulmaoPecas || '0'; document.getElementById('card-sep-total-carrinho').textContent = ultimo.totalCarrinho || '0'; if (ultimo.carrinhos && ultimo.carrinhos.length > 0) { carrinhosDiv.style.display = 'block'; corpoCarrinhos.innerHTML = ''; ultimo.carrinhos.forEach(item => { corpoCarrinhos.innerHTML += `<tr><td>${item.qtde}</td><td>${item.depositante}</td></tr>`; }); } else { carrinhosDiv.style.display = 'none'; } }
+function limparPainel() { if (confirm('Tem certeza que deseja apagar todos os registros do painel?')) { localStorage.removeItem('historicoRecebimento'); localStorage.removeItem('historicoRetrabalho'); localStorage.removeItem('historicoInventario'); localStorage.removeItem('historicoExpedicao'); localStorage.removeItem('historicoQualidade'); localStorage.removeItem('historicoFaleConosco'); localStorage.removeItem('historicoSeparacao'); carregarDadosPainel(); } }
+ 
+</script>
+</body>
+</html>
