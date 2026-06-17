@@ -269,8 +269,6 @@ h1 { color: #2c3e50; text-align: center; font-size: 36px; font-weight: 800; marg
 .campo-total-carrinho { max-width: 400px; margin: 0 auto; }
 .campo-total-carrinho input { width: 100%; padding: 16px 12px; border: 2px solid #16a085; border-radius: 10px; font-size: 22px; background-color: #e8f8f5; transition: all 0.3s; font-weight: 700; text-align: center; color: #16a085; }
 .campo-total-carrinho input:focus { border-color: #16a085; outline: none; background-color: #d1f2eb; }
-
-/* Estilos para tela de consulta */
 .consulta-container { max-width: 800px; margin: 0 auto; text-align: center; }
 .consulta-titulo { color: #2c3e50; font-size: 32px; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
 .consulta-subtitulo { color: #7f8c8d; font-size: 16px; margin-bottom: 30px; }
@@ -282,7 +280,6 @@ h1 { color: #2c3e50; text-align: center; font-size: 36px; font-weight: 800; marg
 .btn-voltar-consulta { background: linear-gradient(135deg, #95a5a6, #7f8c8d); color: white; border: none; border-radius: 12px; padding: 15px 30px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 20px; transition: all 0.3s; box-shadow: 0 4px 15px rgba(149,165,166,0.3); }
 .btn-voltar-consulta:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(149,165,166,0.5); }
 .divisor-azul { border: none; height: 3px; background: linear-gradient(90deg, #3498db, #2980b9); margin: 20px auto; max-width: 600px; border-radius: 2px; }
-
 @media (max-width: 1200px) {
 .form-layout-pc { grid-template-columns: 1fr; }
 .botoes-acao { grid-column: span 1; }
@@ -330,7 +327,6 @@ h1 { color: #2c3e50; text-align: center; font-size: 36px; font-weight: 800; marg
 </div>
 </div>
 
-<!-- TELA DE CONSULTA -->
 <div id="tela-consulta-semana" class="tela">
 <div class="consulta-container">
 <h1 class="consulta-titulo">📅 Consultar Painel Anterior</h1>
@@ -390,6 +386,7 @@ h1 { color: #2c3e50; text-align: center; font-size: 36px; font-weight: 800; marg
 </div>
 </div>
 </div>
+
 <div id="tela-retrabalho" class="tela">
 <h1 style="border-bottom-color: #e67e22;">Retrabalho</h1>
 <div style="max-width: 900px; margin: 0 auto;">
@@ -409,6 +406,7 @@ h1 { color: #2c3e50; text-align: center; font-size: 36px; font-weight: 800; marg
 </div>
 </div>
 </div>
+
 <div id="tela-inventario" class="tela">
 <h1 style="border-bottom-color: #27ae60;">Inventário</h1>
 <div style="max-width: 1200px; margin: 0 auto;">
@@ -448,6 +446,7 @@ h1 { color: #2c3e50; text-align: center; font-size: 36px; font-weight: 800; marg
 </div>
 </div>
 </div>
+
 <div id="tela-expedicao" class="tela">
 <h1 style="border-bottom-color: #2980b9;">Expedição</h1>
 <div style="max-width: 1000px; margin: 0 auto;">
@@ -506,6 +505,7 @@ h1 { color: #2c3e50; text-align: center; font-size: 36px; font-weight: 800; marg
 </div>
 </div>
 </div>
+
 <div id="tela-qualidade" class="tela">
 <h1 style="border-bottom-color: #8e44ad;">Qualidade</h1>
 <div style="max-width: 900px; margin: 0 auto;">
@@ -527,6 +527,7 @@ h1 { color: #2c3e50; text-align: center; font-size: 36px; font-weight: 800; marg
 </div>
 </div>
 </div>
+
 <div id="tela-faleconosco" class="tela">
 <h1 style="border-bottom-color: #e67e22;">Fale Conosco</h1>
 <div style="max-width: 1200px; margin: 0 auto;">
@@ -560,6 +561,7 @@ h1 { color: #2c3e50; text-align: center; font-size: 36px; font-weight: 800; marg
 </div>
 </div>
 </div>
+
 <div id="tela-separacao" class="tela">
 <h1 style="border-bottom-color: #16a085;">Separação</h1>
 <div style="max-width: 1000px; margin: 0 auto;">
@@ -605,6 +607,7 @@ h1 { color: #2c3e50; text-align: center; font-size: 36px; font-weight: 800; marg
 </div>
 </div>
 </div>
+
 <div id="tela-corte" class="tela">
 <h1 style="border-bottom-color: #e67e22;">Corte</h1>
 <div style="max-width: 800px; margin: 0 auto; text-align: center; padding: 60px 20px;">
@@ -614,6 +617,7 @@ h1 { color: #2c3e50; text-align: center; font-size: 36px; font-weight: 800; marg
 <button class="btn-voltar" onclick="mostrarTela('tela-inicial')" style="max-width: 300px; margin: 0 auto;">← Voltar ao Menu</button>
 </div>
 </div>
+
 <div id="tela-absenteismo" class="tela">
 <h1 style="border-bottom-color: #9b59b6;">Absenteísmo</h1>
 <div style="max-width: 800px; margin: 0 auto; text-align: center; padding: 60px 20px;">
@@ -624,6 +628,7 @@ h1 { color: #2c3e50; text-align: center; font-size: 36px; font-weight: 800; marg
 </div>
 </div>
 </div>
+
 <div id="tela-painel" class="tela-painel-fullscreen">
 <div class="painel-header">
 <div class="relogio-container" id="relogio-container"><div class="relogio-data" id="relogio-data">--/--/----</div><div class="relogio-hora" id="relogio-hora">--:--</div></div>
@@ -766,39 +771,65 @@ Painel de Controle - Expedição
 <p id="msg-vazia-painel" class="msg-vazia-painel" style="display: none;">Nenhum registro encontrado. Preencha o formulário de Recebimento.</p>
 </div>
 </div>
+
 <script>
 let contadorCamposOr = 1;
 let intervaloRelogio;
-function mostrarTela(idTela) { document.querySelectorAll('.tela').forEach(tela => tela.classList.remove('ativa')); document.getElementById(idTela).classList.add('ativa'); }
-function abrirPainel() { document.getElementById('tela-painel').classList.add('ativa'); document.getElementById('relogio-container').style.display = 'flex'; iniciarRelogio(); carregarDadosPainel(); }
-function fecharPainel() { document.getElementById('tela-painel').classList.remove('ativa'); clearInterval(intervaloRelogio); }
+
+function mostrarTela(idTela) { 
+    document.querySelectorAll('.tela').forEach(tela => tela.classList.remove('ativa')); 
+    document.getElementById(idTela).classList.add('ativa'); 
+}
+
+function abrirPainel() { 
+    document.getElementById('tela-painel').classList.add('ativa'); 
+    document.getElementById('relogio-container').style.display = 'flex'; 
+    iniciarRelogio(); 
+    carregarDadosPainel(); 
+}
+
+// CORREÇÃO DO BUG: Agora restaura a tela inicial ao fechar
+function fecharPainel() { 
+    document.getElementById('tela-painel').classList.remove('ativa'); 
+    clearInterval(intervaloRelogio);
+    document.getElementById('tela-inicial').classList.add('ativa');
+}
+
 function iniciarRelogio() { atualizarRelogio(); intervaloRelogio = setInterval(atualizarRelogio, 1000); }
 function atualizarRelogio() { const agora = new Date(); document.getElementById('relogio-data').textContent = agora.toLocaleDateString('pt-BR'); document.getElementById('relogio-hora').textContent = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); }
+
 function adicionarCampoOr() { contadorCamposOr++; const lista = document.getElementById('lista-ors-antigas'); const novoCampo = document.createElement('div'); novoCampo.className = 'campo-or-container'; novoCampo.innerHTML = `<input type="text" class="input-or-antiga" placeholder="Ex: OR${contadorCamposOr}"><button class="btn-remover-campo" onclick="removerCampo(this)">×</button>`; lista.appendChild(novoCampo); }
 function removerCampo(botao) { const lista = document.getElementById('lista-ors-antigas'); if (lista.children.length > 1) { botao.parentElement.remove(); } else { alert('É necessário manter pelo menos um campo!'); } }
 function adicionarLinha(tipo) { const grupo = document.getElementById('grupo-linhas'); const novaLinha = document.createElement('div'); novaLinha.className = 'linha-dinamica'; novaLinha.setAttribute('data-tipo', tipo); novaLinha.innerHTML = `<span class="linha-label">${tipo}</span><input type="number" class="linha-input-num" placeholder="0"><input type="text" class="linha-input-text" placeholder="Ex: 123 ou ABC"><button class="btn-remover-linha" onclick="removerLinha(this)">×</button>`; const linhasDoTipo = grupo.querySelectorAll(`.linha-dinamica[data-tipo="${tipo}"]`); const ultimaLinha = linhasDoTipo[linhasDoTipo.length - 1]; ultimaLinha.insertAdjacentElement('afterend', novaLinha); }
 function removerLinha(botao) { const tipo = botao.parentElement.getAttribute('data-tipo'); const grupo = document.getElementById('grupo-linhas'); const linhasDoTipo = grupo.querySelectorAll(`.linha-dinamica[data-tipo="${tipo}"]`); if (linhasDoTipo.length > 1) { botao.parentElement.remove(); } else { alert(`É necessário manter pelo menos uma linha de "${tipo}"!`); } }
 function coletarLinhas(tipo) { const linhas = document.querySelectorAll(`.linha-dinamica[data-tipo="${tipo}"]`); const resultado = []; linhas.forEach(linha => { const num = linha.querySelector('.linha-input-num').value || '0'; const txt = linha.querySelector('.linha-input-text').value || '-'; resultado.push(`${num}|${txt}`); }); return resultado; }
+
 function adicionarLinhaRetrabalho() { const corpo = document.getElementById('corpo-tabela-retrabalho'); const novaLinha = document.createElement('tr'); novaLinha.innerHTML = `<td><input type="text" class="input-depositante" placeholder="Nome do depositante"></td><td><input type="text" class="input-descricao" placeholder="Descrição do retrabalho"></td><td><button class="btn-remover-linha-retrabalho" onclick="removerLinhaRetrabalho(this)">×</button></td>`; corpo.appendChild(novaLinha); }
 function removerLinhaRetrabalho(botao) { const corpo = document.getElementById('corpo-tabela-retrabalho'); if (corpo.children.length > 1) { botao.closest('tr').remove(); } else { alert('É necessário manter pelo menos uma linha!'); } }
 function salvarRetrabalho() { const linhas = document.querySelectorAll('#corpo-tabela-retrabalho tr'); const registros = []; linhas.forEach(linha => { const depositante = linha.querySelector('.input-depositante').value.trim(); const descricao = linha.querySelector('.input-descricao').value.trim(); if (depositante !== '' || descricao !== '') { registros.push({ depositante: depositante || '-', descricao: descricao || '-' }); } }); if (registros.length === 0) { alert('Preencha pelo menos um registro de retrabalho!'); return; } const registroRetrabalho = { data: new Date().toLocaleString('pt-BR'), registros: registros }; localStorage.setItem('historicoRetrabalho', JSON.stringify(registroRetrabalho)); document.querySelectorAll('#tela-retrabalho input').forEach(input => input.value = ''); const corpo = document.getElementById('corpo-tabela-retrabalho'); corpo.innerHTML = `<tr><td><input type="text" class="input-depositante" placeholder="Nome do depositante"></td><td><input type="text" class="input-descricao" placeholder="Descrição do retrabalho"></td><td></td></tr>`; alert('Retrabalho salvo com sucesso!'); }
+
 function adicionarLinhaInventario() { const corpo = document.getElementById('corpo-tabela-inventario'); const novaLinha = document.createElement('tr'); novaLinha.innerHTML = `<td><input type="text" class="input-depositante-inv" placeholder="Nome"></td><td><input type="text" class="input-tt" placeholder="0"></td><td><input type="text" class="input-contado" placeholder="0"></td><td><div class="input-com-suffix"><input type="number" class="input-evolucao" placeholder="0,00" step="0.01" min="0" max="100"><span class="input-suffix">%</span></div></td><td><div class="input-com-suffix"><input type="number" class="input-ila" placeholder="0,00" step="0.01" min="0" max="100"><span class="input-suffix">%</span></div></td><td><div class="input-com-suffix"><input type="number" class="input-acuracia" placeholder="0,00" step="0.01" min="0" max="100"><span class="input-suffix">%</span></div></td><td><button class="btn-remover-linha-inventario" onclick="removerLinhaInventario(this)">×</button></td>`; corpo.appendChild(novaLinha); }
 function removerLinhaInventario(botao) { const corpo = document.getElementById('corpo-tabela-inventario'); if (corpo.children.length > 1) { botao.closest('tr').remove(); } else { alert('É necessário manter pelo menos uma linha!'); } }
 function salvarInventario() { const linhasInv = document.querySelectorAll('#corpo-tabela-inventario tr'); const registrosInv = []; linhasInv.forEach(linha => { const depositante = linha.querySelector('.input-depositante-inv').value.trim(); const tt = linha.querySelector('.input-tt').value.trim(); const contado = linha.querySelector('.input-contado').value.trim(); const evolucao = linha.querySelector('.input-evolucao').value; const ila = linha.querySelector('.input-ila').value; const acuracia = linha.querySelector('.input-acuracia').value; if (depositante !== '' || tt !== '' || contado !== '') { registrosInv.push({ depositante: depositante || '-', tt: tt || '0', contado: contado || '0', evolucao: evolucao ? parseFloat(evolucao).toFixed(2) + '%' : '0,00%', ila: ila ? parseFloat(ila).toFixed(2) + '%' : '0,00%', acuracia: acuracia ? parseFloat(acuracia).toFixed(2) + '%' : '0,00%' }); } }); const qtdPaletes = document.getElementById('input-qtd-paletes').value.trim(); if (registrosInv.length === 0 && qtdPaletes === '') { alert('Preencha pelo menos um registro de inventário ou paletes!'); return; } const registroInventario = { data: new Date().toLocaleString('pt-BR'), registrosInventario: registrosInv, qtdPaletes: qtdPaletes || '0' }; localStorage.setItem('historicoInventario', JSON.stringify(registroInventario)); document.querySelectorAll('#tela-inventario #tabela-inventario input').forEach(input => input.value = ''); const corpoInv = document.getElementById('corpo-tabela-inventario'); corpoInv.innerHTML = `<tr><td><input type="text" class="input-depositante-inv" placeholder="Nome"></td><td><input type="text" class="input-tt" placeholder="0"></td><td><input type="text" class="input-contado" placeholder="0"></td><td><div class="input-com-suffix"><input type="number" class="input-evolucao" placeholder="0,00" step="0.01" min="0" max="100"><span class="input-suffix">%</span></div></td><td><div class="input-com-suffix"><input type="number" class="input-ila" placeholder="0,00" step="0.01" min="0" max="100"><span class="input-suffix">%</span></div></td><td><div class="input-com-suffix"><input type="number" class="input-acuracia" placeholder="0,00" step="0.01" min="0" max="100"><span class="input-suffix">%</span></div></td><td></td></tr>`; document.getElementById('input-qtd-paletes').value = ''; alert('Inventário e Paletes salvos com sucesso!'); }
+
 function adicionarLinhaPendencias() { const corpo = document.getElementById('corpo-tabela-pendencias-paletes'); const novaLinha = document.createElement('tr'); novaLinha.innerHTML = `<td><input type="text" class="input-transportadora" placeholder="Nome da transportadora"></td><td><input type="number" class="input-paletes" placeholder="0"></td><td><button class="btn-remover-linha-pendencias" onclick="removerLinhaPendencias(this)">×</button></td>`; corpo.appendChild(novaLinha); }
 function removerLinhaPendencias(botao) { const corpo = document.getElementById('corpo-tabela-pendencias-paletes'); if (corpo.children.length > 1) { botao.closest('tr').remove(); } else { alert('É necessário manter pelo menos uma linha!'); } }
 function salvarExpedicao() { try { const volume = document.getElementById('exp-volume').value.trim(); const hs24 = document.getElementById('exp-24hs').value.trim(); const ontem = document.getElementById('exp-ontem').value.trim(); const depositante = document.getElementById('exp-depositante').value.trim(); const notaAntiga = document.getElementById('exp-nota-antiga').value.trim(); const slaPedidos = parseFloat(document.getElementById('slaPedidosPercentual').value) || 0; if (volume === '' && hs24 === '' && ontem === '' && depositante === '' && notaAntiga === '') { alert('Preencha pelo menos um campo!'); return; } const linhasPendencias = document.querySelectorAll('#corpo-tabela-pendencias-paletes tr'); const pendencias = []; linhasPendencias.forEach(linha => { const transportadora = linha.querySelector('.input-transportadora').value.trim(); const paletes = linha.querySelector('.input-paletes').value.trim(); if (transportadora !== '' || paletes !== '') { pendencias.push({ transportadora: transportadora || '-', paletes: paletes || '0' }); } }); const novoRegistro = { data: new Date().toLocaleString('pt-BR'), volume: volume || '0', hs24: hs24 || '0', ontem: ontem || '0', depositante: depositante || '-', notaAntiga: notaAntiga || '-', pendenciasPaletes: pendencias, slaPedidos: slaPedidos }; let historicoExp = JSON.parse(localStorage.getItem('historicoExpedicao')) || []; historicoExp.unshift(novoRegistro); if (historicoExp.length > 10) historicoExp = historicoExp.slice(0, 10); localStorage.setItem('historicoExpedicao', JSON.stringify(historicoExp)); document.getElementById('exp-volume').value = ''; document.getElementById('exp-24hs').value = ''; document.getElementById('exp-ontem').value = ''; document.getElementById('exp-depositante').value = ''; document.getElementById('exp-nota-antiga').value = ''; document.getElementById('slaPedidosPercentual').value = ''; const corpoPendencias = document.getElementById('corpo-tabela-pendencias-paletes'); corpoPendencias.innerHTML = `<tr><td><input type="text" class="input-transportadora" placeholder="Nome da transportadora"></td><td><input type="number" class="input-paletes" placeholder="0"></td><td></td></tr>`; alert('Expedição salva com sucesso!'); } catch (error) { console.error('Erro ao salvar expedição:', error); alert('Erro ao salvar: ' + error.message); } }
+
 function adicionarLinhaQualidade() { const corpo = document.getElementById('corpo-tabela-qualidade'); const contador = corpo.children.length + 1; const novaLinha = document.createElement('tr'); novaLinha.innerHTML = `<td><input type="number" class="input-qualidade-num" placeholder="${contador}"></td><td><input type="text" class="input-qualidade-assunto" placeholder="Digite o assunto"></td><td><button class="btn-remover-linha" onclick="removerLinhaQualidade(this)" style="width: 36px; height: 36px; font-size: 22px;">×</button></td>`; corpo.appendChild(novaLinha); }
 function removerLinhaQualidade(botao) { const corpo = document.getElementById('corpo-tabela-qualidade'); if (corpo.children.length > 1) { botao.closest('tr').remove(); const linhas = corpo.querySelectorAll('tr'); linhas.forEach((linha, index) => { const inputNum = linha.querySelector('.input-qualidade-num'); if (inputNum) inputNum.placeholder = index + 1; }); } else { alert('É necessário manter pelo menos uma linha!'); } }
 function salvarQualidade() { try { const linhas = document.querySelectorAll('#corpo-tabela-qualidade tr'); const registros = []; linhas.forEach(linha => { const numero = linha.querySelector('.input-qualidade-num').value.trim(); const assunto = linha.querySelector('.input-qualidade-assunto').value.trim(); if (numero !== '' || assunto !== '') { registros.push({ numero: numero || registros.length + 1, assunto: assunto || '-' }); } }); if (registros.length === 0) { alert('Preencha pelo menos um registro de qualidade!'); return; } const registroQualidade = { data: new Date().toLocaleString('pt-BR'), registros: registros }; localStorage.setItem('historicoQualidade', JSON.stringify(registroQualidade)); const corpo = document.getElementById('corpo-tabela-qualidade'); corpo.innerHTML = `<tr><td><input type="number" class="input-qualidade-num" placeholder="1"></td><td><input type="text" class="input-qualidade-assunto" placeholder="Digite o assunto"></td><td></td></tr>`; alert('Qualidade salva com sucesso!'); } catch (error) { console.error('Erro ao salvar qualidade:', error); alert('Erro ao salvar: ' + error.message); } }
+
 function adicionarLinhaRemanacoes() { const corpo = document.getElementById('corpo-tabela-remanacoes'); const novaLinha = document.createElement('tr'); novaLinha.innerHTML = `<td><input type="text" class="input-mes" placeholder="Ex: Janeiro"></td><td><input type="number" class="input-qtde-remanacoes" placeholder="0"></td><td><input type="number" class="input-procedentes" placeholder="0"></td><td><input type="number" class="input-improcedentes" placeholder="0"></td><td><input type="number" class="input-em-analise" placeholder="0"></td>`; corpo.appendChild(novaLinha); }
 function adicionarLinhaReclamacoes() { const corpo = document.getElementById('corpo-tabela-reclamacoes'); const novaLinha = document.createElement('tr'); novaLinha.innerHTML = `<td><input type="text" class="input-depositante-rec" placeholder="Nome do depositante"></td><td><input type="number" class="input-falta" placeholder="0"></td><td><input type="number" class="input-inversao" placeholder="0"></td><td><input type="number" class="input-sobra" placeholder="0"></td><td><input type="number" class="input-dano" placeholder="0"></td><td><button class="btn-remover-linha" onclick="removerLinhaReclamacoes(this)" style="width: 36px; height: 36px; font-size: 22px;">×</button></td>`; corpo.appendChild(novaLinha); }
 function removerLinhaReclamacoes(botao) { const corpo = document.getElementById('corpo-tabela-reclamacoes'); if (corpo.children.length > 1) { botao.closest('tr').remove(); } else { alert('É necessário manter pelo menos uma linha!'); } }
 function salvarFaleConosco() { try { const linhasRemanacoes = document.querySelectorAll('#corpo-tabela-remanacoes tr'); const remanacoes = []; linhasRemanacoes.forEach(linha => { const mes = linha.querySelector('.input-mes').value.trim(); const qtde = linha.querySelector('.input-qtde-remanacoes').value.trim(); const procedentes = linha.querySelector('.input-procedentes').value.trim(); const improcedentes = linha.querySelector('.input-improcedentes').value.trim(); const emAnalise = linha.querySelector('.input-em-analise').value.trim(); if (mes !== '' || qtde !== '') { remanacoes.push({ mes: mes || '-', qtdeRemanacoes: qtde || '0', procedentes: procedentes || '0', improcedentes: improcedentes || '0', emAnalise: emAnalise || '0' }); } }); const linhasReclamacoes = document.querySelectorAll('#corpo-tabela-reclamacoes tr'); const reclamacoes = []; linhasReclamacoes.forEach(linha => { const depositante = linha.querySelector('.input-depositante-rec').value.trim(); const falta = linha.querySelector('.input-falta').value.trim(); const inversao = linha.querySelector('.input-inversao').value.trim(); const sobra = linha.querySelector('.input-sobra').value.trim(); const dano = linha.querySelector('.input-dano').value.trim(); if (depositante !== '' || falta !== '' || inversao !== '' || sobra !== '' || dano !== '') { reclamacoes.push({ depositante: depositante || '-', falta: falta || '0', inversao: inversao || '0', sobra: sobra || '0', dano: dano || '0' }); } }); if (remanacoes.length === 0 && reclamacoes.length === 0) { alert('Preencha pelo menos um registro de remanações ou reclamações!'); return; } const registroFaleConosco = { data: new Date().toLocaleString('pt-BR'), remanacoes: remanacoes, reclamacoes: reclamacoes }; localStorage.setItem('historicoFaleConosco', JSON.stringify(registroFaleConosco)); const corpoRemanacoes = document.getElementById('corpo-tabela-remanacoes'); corpoRemanacoes.innerHTML = `<tr><td><input type="text" class="input-mes" placeholder="Ex: Janeiro"></td><td><input type="number" class="input-qtde-remanacoes" placeholder="0"></td><td><input type="number" class="input-procedentes" placeholder="0"></td><td><input type="number" class="input-improcedentes" placeholder="0"></td><td><input type="number" class="input-em-analise" placeholder="0"></td></tr>`; const corpoReclamacoes = document.getElementById('corpo-tabela-reclamacoes'); corpoReclamacoes.innerHTML = `<tr><td><input type="text" class="input-depositante-rec" placeholder="Nome do depositante"></td><td><input type="number" class="input-falta" placeholder="0"></td><td><input type="number" class="input-inversao" placeholder="0"></td><td><input type="number" class="input-sobra" placeholder="0"></td><td><input type="number" class="input-dano" placeholder="0"></td><td></td></tr>`; alert('Fale Conosco salvo com sucesso!'); } catch (error) { console.error('Erro ao salvar fale conosco:', error); alert('Erro ao salvar: ' + error.message); } }
+
 function adicionarLinhaCarrinho() { const corpo = document.getElementById('corpo-tabela-carrinho'); const novaLinha = document.createElement('tr'); novaLinha.innerHTML = `<td><input type="number" class="input-qtde-carrinho" placeholder="0" oninput="calcularTotalCarrinho()"></td><td><input type="text" class="input-depositante-carrinho" placeholder="Nome do depositante"></td><td><button class="btn-remover-linha-carrinho" onclick="removerLinhaCarrinho(this)">×</button></td>`; corpo.appendChild(novaLinha); }
 function removerLinhaCarrinho(botao) { const corpo = document.getElementById('corpo-tabela-carrinho'); if (corpo.children.length > 1) { botao.closest('tr').remove(); calcularTotalCarrinho(); } else { alert('É necessário manter pelo menos uma linha!'); } }
 function calcularTotalCarrinho() { const inputs = document.querySelectorAll('.input-qtde-carrinho'); let total = 0; inputs.forEach(input => { total += parseInt(input.value) || 0; }); document.getElementById('sep-total-carrinho').value = total; }
-function salvarSeparacao() { try { const pickingOndas = document.getElementById('sep-picking-ondas').value.trim(); const pickingPecas = document.getElementById('sep-picking-pecas').value.trim(); const pulmaoOndas = document.getElementById('sep-pulmao-ondas').value.trim(); const pulmaoPecas = document.getElementById('sep-pulmao-pecas').value.trim(); const remanejamento = document.getElementById('sep-remanejamento').value.trim(); const totalCarrinho = document.getElementById('sep-total-carrinho').value.trim(); if (pickingOndas === '' && pickingPecas === '' && pulmaoOndas === '' && pulmaoPecas === '' && remanejamento === '') { alert('Preencha pelo menos um campo!'); return; } const linhasCarrinho = document.querySelectorAll('#corpo-tabela-carrinho tr'); const carrinhos = []; linhasCarrinho.forEach(linha => { const qtde = linha.querySelector('.input-qtde-carrinho').value.trim(); const depositante = linha.querySelector('.input-depositante-carrinho').value.trim(); if (qtde !== '' || depositante !== '') { carrinhos.push({ qtde: qtde || '0', depositante: depositante || '-' }); } }); const novoRegistro = { data: new Date().toLocaleString('pt-BR'), pickingOndas: pickingOndas || '0', pickingPecas: pickingPecas || '0', pulmaoOndas: pulmaoOndas || '0', pulmaoPecas: pulmaoPecas || '0', remanejamento: remanejamento || '0', totalCarrinho: totalCarrinho || '0', carrinhos: carrinhos }; let historicoSep = JSON.parse(localStorage.getItem('historicoSeparacao')) || []; historicoSep.unshift(novoRegistro); if (historicoSep.length > 10) historicoSep = historicoSep.slice(0, 10); localStorage.setItem('historicoSeparacao', JSON.stringify(historicoSep)); document.getElementById('sep-picking-ondas').value = ''; document.getElementById('sep-picking-pecas').value = ''; document.getElementById('sep-pulmao-ondas').value = ''; document.getElementById('sep-pulmao-pecas').value = ''; document.getElementById('sep-remanejamento').value = ''; document.getElementById('sep-total-carrinho').value = ''; const corpoCarrinho = document.getElementById('corpo-tabela-carrinho'); corpoCarrinho.innerHTML = `<tr><td><input type="number" class="input-qtde-carrinho" placeholder="0" oninput("calcularTotalCarrinho()")></td><td><input type="text" class="input-depositante-carrinho" placeholder="Nome do depositante"></td><td></td></tr>`; alert('Separação salva com sucesso!'); } catch (error) { console.error('Erro ao salvar separação:', error); alert('Erro ao salvar: ' + error.message); } }
+function salvarSeparacao() { try { const pickingOndas = document.getElementById('sep-picking-ondas').value.trim(); const pickingPecas = document.getElementById('sep-picking-pecas').value.trim(); const pulmaoOndas = document.getElementById('sep-pulmao-ondas').value.trim(); const pulmaoPecas = document.getElementById('sep-pulmao-pecas').value.trim(); const remanejamento = document.getElementById('sep-remanejamento').value.trim(); const totalCarrinho = document.getElementById('sep-total-carrinho').value.trim(); if (pickingOndas === '' && pickingPecas === '' && pulmaoOndas === '' && pulmaoPecas === '' && remanejamento === '') { alert('Preencha pelo menos um campo!'); return; } const linhasCarrinho = document.querySelectorAll('#corpo-tabela-carrinho tr'); const carrinhos = []; linhasCarrinho.forEach(linha => { const qtde = linha.querySelector('.input-qtde-carrinho').value.trim(); const depositante = linha.querySelector('.input-depositante-carrinho').value.trim(); if (qtde !== '' || depositante !== '') { carrinhos.push({ qtde: qtde || '0', depositante: depositante || '-' }); } }); const novoRegistro = { data: new Date().toLocaleString('pt-BR'), pickingOndas: pickingOndas || '0', pickingPecas: pickingPecas || '0', pulmaoOndas: pulmaoOndas || '0', pulmaoPecas: pulmaoPecas || '0', remanejamento: remanejamento || '0', totalCarrinho: totalCarrinho || '0', carrinhos: carrinhos }; let historicoSep = JSON.parse(localStorage.getItem('historicoSeparacao')) || []; historicoSep.unshift(novoRegistro); if (historicoSep.length > 10) historicoSep = historicoSep.slice(0, 10); localStorage.setItem('historicoSeparacao', JSON.stringify(historicoSep)); document.getElementById('sep-picking-ondas').value = ''; document.getElementById('sep-picking-pecas').value = ''; document.getElementById('sep-pulmao-ondas').value = ''; document.getElementById('sep-pulmao-pecas').value = ''; document.getElementById('sep-remanejamento').value = ''; document.getElementById('sep-total-carrinho').value = ''; const corpoCarrinho = document.getElementById('corpo-tabela-carrinho'); corpoCarrinho.innerHTML = `<tr><td><input type="number" class="input-qtde-carrinho" placeholder="0" oninput="calcularTotalCarrinho()"></td><td><input type="text" class="input-depositante-carrinho" placeholder="Nome do depositante"></td><td></td></tr>`; alert('Separação salva com sucesso!'); } catch (error) { console.error('Erro ao salvar separação:', error); alert('Erro ao salvar: ' + error.message); } }
+
 function calcularCorSLA(valor) { if (valor <= 86) return '#e74c3c'; if (valor <= 97) return '#f1c40f'; return '#27ae60'; }
 function calcularStatusSLA(valor) { if (valor <= 86) return 'CRÍTICO'; if (valor <= 97) return 'ATENÇÃO'; return 'EXCELENTE'; }
 function calcularAnguloAgulha(valor) { return -90 + (valor / 100) * 180; }
@@ -806,6 +837,7 @@ function calcularDashArray(valor) { const circunferencia = 283; const preenchime
 function atualizarPreviewSLA() { const valor = parseFloat(document.getElementById('slaPercentual').value) || 0; const valorLimitado = Math.min(100, Math.max(0, valor)); const cor = calcularCorSLA(valorLimitado); const angulo = calcularAnguloAgulha(valorLimitado); const dashArray = calcularDashArray(valorLimitado); document.getElementById('sla-preview-arc').setAttribute('stroke', cor); document.getElementById('sla-preview-arc').setAttribute('stroke-dasharray', dashArray); document.getElementById('sla-preview-agulha').style.transform = `rotate(${angulo}deg)`; }
 function atualizarGaugePainel(valor) { const valorLimitado = Math.min(100, Math.max(0, valor)); const cor = calcularCorSLA(valorLimitado); const angulo = calcularAnguloAgulha(valorLimitado); const dashArray = calcularDashArray(valorLimitado); const status = calcularStatusSLA(valorLimitado); document.getElementById('sla-arc-fill').setAttribute('stroke', cor); document.getElementById('sla-arc-fill').setAttribute('stroke-dasharray', dashArray); document.getElementById('sla-agulha-painel').style.transform = `rotate(${angulo}deg)`; document.getElementById('sla-valor-painel').textContent = valorLimitado.toFixed(2).replace('.', ',') + '%'; document.getElementById('sla-valor-painel').style.color = cor; document.getElementById('sla-status-painel').textContent = status; document.getElementById('sla-status-painel').style.color = cor; }
 function atualizarPreviewSLAPedidos() { const valor = parseFloat(document.getElementById('slaPedidosPercentual').value) || 0; const valorLimitado = Math.min(100, Math.max(0, valor)); const cor = calcularCorSLA(valorLimitado); const angulo = calcularAnguloAgulha(valorLimitado); const dashArray = calcularDashArray(valorLimitado); document.getElementById('sla-pedidos-preview-arc').setAttribute('stroke', cor); document.getElementById('sla-pedidos-preview-arc').setAttribute('stroke-dasharray', dashArray); document.getElementById('sla-pedidos-preview-agulha').style.transform = `rotate(${angulo}deg)`; }
+
 function salvarRecebimento() { const camposOr = document.querySelectorAll('.input-or-antiga'); const orsAntigas = Array.from(camposOr).map(input => input.value.trim()).filter(valor => valor !== '').join(', '); const slaValor = parseFloat(document.getElementById('slaPercentual').value) || 0; const registro = { data: new Date().toLocaleString('pt-BR'), totalGrafica: document.getElementById('totalGrafica').value || '0', totalDevolucao: document.getElementById('totalDevolucao').value || '0', confGrafica: document.getElementById('confGrafica').value || '0', confDevolucao: document.getElementById('confDevolucao').value || '0', alocGrafica: document.getElementById('alocGrafica').value || '0', alocDevolucao: document.getElementById('alocDevolucao').value || '0', divGrafica: document.getElementById('divGrafica').value || '0', divDevolucao: document.getElementById('divDevolucao').value || '0', cliGrafica: document.getElementById('cliGrafica').value || '0', cliDevolucao: document.getElementById('cliDevolucao').value || '0', digitado: coletarLinhas('Digitado'), pendente: coletarLinhas('Pendente'), agDia: coletarLinhas('Ag. Dia'), precupacao: coletarLinhas('Precupação'), slaPercentual: slaValor, orsAntigas: orsAntigas || '-' }; let historico = JSON.parse(localStorage.getItem('historicoRecebimento')) || []; historico.unshift(registro); localStorage.setItem('historicoRecebimento', JSON.stringify(historico)); document.querySelectorAll('#tela-recebimento input').forEach(input => input.value = ''); resetarLinhasDinamicas(); alert('Dados salvos com sucesso!'); }
 function resetarLinhasDinamicas() { const grupo = document.getElementById('grupo-linhas'); grupo.innerHTML = `<div class="linha-dinamica" data-tipo="Digitado"><span class="linha-label">Digitado</span><input type="number" class="linha-input-num" placeholder="0"><input type="text" class="linha-input-text" placeholder="Ex: 123 ou ABC"><button class="btn-add-linha" onclick="adicionarLinha('Digitado')">+</button></div><div class="linha-dinamica" data-tipo="Pendente"><span class="linha-label">Pendente</span><input type="number" class="linha-input-num" placeholder="0"><input type="text" class="linha-input-text" placeholder="Ex: 123 ou ABC"><button class="btn-add-linha" onclick="adicionarLinha('Pendente')">+</button></div><div class="linha-dinamica" data-tipo="Ag. Dia"><span class="linha-label">Ag. Dia</span><input type="number" class="linha-input-num" placeholder="0"><input type="text" class="linha-input-text" placeholder="Ex: 123 ou ABC"><button class="btn-add-linha" onclick="adicionarLinha('Ag. Dia')">+</button></div><div class="linha-dinamica" data-tipo="Precupação"><span class="linha-label">Precupação</span><input type="number" class="linha-input-num" placeholder="0"><input type="text" class="linha-input-text" placeholder="Ex: 123 ou ABC"><button class="btn-add-linha" onclick="adicionarLinha('Precupação')">+</button></div>`; }
 function somarLinhas(arr) { if (!arr || arr.length === 0) return 0; let total = 0; arr.forEach(item => { const num = parseInt(item.split('|')[0]) || 0; total += num; }); return total; }
@@ -813,21 +845,17 @@ function calcularTendencia(valorAtual, valorAnterior) { const atual = parseInt(v
 function calcularTendenciaExp(valorAtual, valorAnterior) { const atual = parseInt(valorAtual) || 0; const anterior = parseInt(valorAnterior) || 0; if (atual > anterior) { return '<span class="tendencia-exp-up">↑</span>'; } else if (atual < anterior) { return '<span class="tendencia-exp-down">↓</span>'; } else { return '<span class="tendencia-exp-neutral">→</span>'; } }
 function formatarDetalhes(arr) { if (!arr || arr.length === 0) return '<div style="color: #7fb3d5; font-size: 14px; text-align: center; padding: 10px;">Nenhum registro</div>'; return arr.map(item => { const partes = item.split('|'); const num = partes[0] || '0'; const txt = partes[1] || '-'; return `<div class="card-detalhe-item"><span class="card-detalhe-num">${num}</span><span class="card-detalhe-texto">${txt}</span></div>`; }).join(''); }
 
-// FUNÇÃO DE CONSULTA DE DATAS
 function carregarConsultaSemana() {
     const lista = document.getElementById('lista-datas-semana');
     lista.innerHTML = '';
     const hoje = new Date();
     const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-    
     for (let i = 0; i < 7; i++) {
         const data = new Date(hoje);
         data.setDate(hoje.getDate() - i);
         const diaSemana = diasSemana[data.getDay()];
         const dataStr = data.toLocaleDateString('pt-BR');
-        
         if (data.getDay() === 0 || data.getDay() === 6) continue;
-        
         const temDados = verificarDadosData(dataStr);
         const btn = document.createElement('button');
         btn.className = 'btn-dia-semana' + (temDados ? '' : ' sem-dados');
@@ -860,14 +888,10 @@ function carregarPainelData(dataStr) {
     const dadosQualidade = JSON.parse(localStorage.getItem('historicoQualidade') || 'null');
     const dadosFaleConosco = JSON.parse(localStorage.getItem('historicoFaleConosco') || 'null');
     const dadosSeparacao = JSON.parse(localStorage.getItem('historicoSeparacao') || '[]');
-    
     const itemRecebimento = Array.isArray(dadosRecebimento) ? dadosRecebimento.find(item => item.data && item.data.startsWith(dataStr)) : null;
     const itemExpedicao = Array.isArray(dadosExpedicao) ? dadosExpedicao.find(item => item.data && item.data.startsWith(dataStr)) : null;
     const itemSeparacao = Array.isArray(dadosSeparacao) ? dadosSeparacao.find(item => item.data && item.data.startsWith(dataStr)) : null;
-    
-    // Esconder relógio quando for consulta de data
     document.getElementById('relogio-container').style.display = 'none';
-    
     if (itemRecebimento) {
         document.getElementById('card-total-grafica').textContent = itemRecebimento.totalGrafica || '0';
         document.getElementById('card-total-devolucao').textContent = itemRecebimento.totalDevolucao || '0';
@@ -890,7 +914,6 @@ function carregarPainelData(dataStr) {
         document.getElementById('card-ors-antigas').textContent = itemRecebimento.orsAntigas || '-';
         atualizarGaugePainel(itemRecebimento.slaPercentual || 0);
     }
-    
     if (dadosRetrabalho && dadosRetrabalho.data && dadosRetrabalho.data.startsWith(dataStr)) {
         document.getElementById('corpo-tabela-retrabalho-painel').innerHTML = '';
         if (dadosRetrabalho.registros) {
@@ -899,7 +922,6 @@ function carregarPainelData(dataStr) {
             });
         }
     }
-    
     if (dadosInventario && dadosInventario.data && dadosInventario.data.startsWith(dataStr)) {
         document.getElementById('corpo-tabela-inventario-painel').innerHTML = '';
         if (dadosInventario.registrosInventario) {
@@ -914,7 +936,6 @@ function carregarPainelData(dataStr) {
             document.getElementById('paletes-no-inventario').style.display = 'none';
         }
     }
-    
     if (itemExpedicao) {
         document.getElementById('card-exp-volume').textContent = itemExpedicao.volume || '0';
         document.getElementById('card-exp-24hs').textContent = itemExpedicao.hs24 || '0';
@@ -942,7 +963,6 @@ function carregarPainelData(dataStr) {
             });
         }
     }
-    
     if (dadosQualidade && dadosQualidade.data && dadosQualidade.data.startsWith(dataStr)) {
         document.getElementById('grid-qualidade-painel').innerHTML = '';
         if (dadosQualidade.registros) {
@@ -951,7 +971,6 @@ function carregarPainelData(dataStr) {
             });
         }
     }
-    
     if (dadosFaleConosco && dadosFaleConosco.data && dadosFaleConosco.data.startsWith(dataStr)) {
         let totalRemanacoes = 0, totalProcedentes = 0, totalImprocedentes = 0, totalEmAnalise = 0;
         if (dadosFaleConosco.remanacoes) {
@@ -982,7 +1001,6 @@ function carregarPainelData(dataStr) {
             });
         }
     }
-    
     if (itemSeparacao) {
         document.getElementById('card-sep-picking-ondas').textContent = itemSeparacao.pickingOndas || '0';
         document.getElementById('card-sep-picking-pecas').textContent = itemSeparacao.pickingPecas || '0';
@@ -997,11 +1015,66 @@ function carregarPainelData(dataStr) {
             });
         }
     }
-    
     mostrarTela('tela-painel');
 }
 
-function carregarDadosPainel() { const historico = JSON.parse(localStorage.getItem('historicoRecebimento')) || []; const msgVazia = document.getElementById('msg-vazia-painel'); const gridPrincipal = document.getElementById('grid-principal'); const gridSecundario = document.getElementById('grid-secundario'); const cardOrAntiga = document.getElementById('card-or-antiga-container'); const cardSla = document.getElementById('card-sla-container'); if (historico.length === 0) { gridPrincipal.style.display = 'none'; gridSecundario.style.display = 'none'; cardOrAntiga.style.display = 'none'; cardSla.style.display = 'none'; msgVazia.style.display = 'block'; } else { gridPrincipal.style.display = 'grid'; gridSecundario.style.display = 'grid'; cardOrAntiga.style.display = 'flex'; cardSla.style.display = 'flex'; msgVazia.style.display = 'none'; const ultimo = historico[0]; const anterior = historico.length > 1 ? historico[1] : null; document.getElementById('card-total-grafica').textContent = ultimo.totalGrafica || '0'; document.getElementById('card-total-devolucao').textContent = ultimo.totalDevolucao || '0'; document.getElementById('card-conf-grafica').textContent = ultimo.confGrafica || '0'; document.getElementById('card-conf-devolucao').textContent = ultimo.confDevolucao || '0'; document.getElementById('card-aloc-grafica').textContent = ultimo.alocGrafica || '0'; document.getElementById('card-aloc-devolucao').textContent = ultimo.alocDevolucao || '0'; document.getElementById('card-div-grafica').textContent = ultimo.divGrafica || '0'; document.getElementById('card-div-devolucao').textContent = ultimo.divDevolucao || '0'; document.getElementById('card-cli-grafica').textContent = ultimo.cliGrafica || '0'; document.getElementById('card-cli-devolucao').textContent = ultimo.cliDevolucao || '0'; if (anterior) { document.getElementById('tend-total-grafica').innerHTML = calcularTendencia(ultimo.totalGrafica, anterior.totalGrafica); document.getElementById('tend-total-devolucao').innerHTML = calcularTendencia(ultimo.totalDevolucao, anterior.totalDevolucao); } else { document.getElementById('tend-total-grafica').innerHTML = ''; document.getElementById('tend-total-devolucao').innerHTML = ''; } document.getElementById('card-dig-total').textContent = somarLinhas(ultimo.digitado); document.getElementById('card-pend-total').textContent = somarLinhas(ultimo.pendente); document.getElementById('card-ag-total').textContent = somarLinhas(ultimo.agDia); document.getElementById('card-prec-total').textContent = somarLinhas(ultimo.precupacao); document.getElementById('card-dig-detalhes').innerHTML = formatarDetalhes(ultimo.digitado); document.getElementById('card-pend-detalhes').innerHTML = formatarDetalhes(ultimo.pendente); document.getElementById('card-ag-detalhes').innerHTML = formatarDetalhes(ultimo.agDia); document.getElementById('card-prec-detalhes').innerHTML = formatarDetalhes(ultimo.precupacao); document.getElementById('card-ors-antigas').textContent = ultimo.orsAntigas || '-'; atualizarGaugePainel(ultimo.slaPercentual || 0); } carregarRetrabalhoPainel(); carregarInventarioPainel(); carregarExpedicaoPainel(); carregarQualidadePainel(); carregarFaleConoscoPainel(); carregarSeparacaoPainel(); }
+function carregarDadosPainel() { 
+    const historico = JSON.parse(localStorage.getItem('historicoRecebimento')) || []; 
+    const msgVazia = document.getElementById('msg-vazia-painel'); 
+    const gridPrincipal = document.getElementById('grid-principal'); 
+    const gridSecundario = document.getElementById('grid-secundario'); 
+    const cardOrAntiga = document.getElementById('card-or-antiga-container'); 
+    const cardSla = document.getElementById('card-sla-container'); 
+    if (historico.length === 0) { 
+        gridPrincipal.style.display = 'none'; 
+        gridSecundario.style.display = 'none'; 
+        cardOrAntiga.style.display = 'none'; 
+        cardSla.style.display = 'none'; 
+        msgVazia.style.display = 'block'; 
+    } else { 
+        gridPrincipal.style.display = 'grid'; 
+        gridSecundario.style.display = 'grid'; 
+        cardOrAntiga.style.display = 'flex'; 
+        cardSla.style.display = 'flex'; 
+        msgVazia.style.display = 'none'; 
+        const ultimo = historico[0]; 
+        const anterior = historico.length > 1 ? historico[1] : null; 
+        document.getElementById('card-total-grafica').textContent = ultimo.totalGrafica || '0'; 
+        document.getElementById('card-total-devolucao').textContent = ultimo.totalDevolucao || '0'; 
+        document.getElementById('card-conf-grafica').textContent = ultimo.confGrafica || '0'; 
+        document.getElementById('card-conf-devolucao').textContent = ultimo.confDevolucao || '0'; 
+        document.getElementById('card-aloc-grafica').textContent = ultimo.alocGrafica || '0'; 
+        document.getElementById('card-aloc-devolucao').textContent = ultimo.alocDevolucao || '0'; 
+        document.getElementById('card-div-grafica').textContent = ultimo.divGrafica || '0'; 
+        document.getElementById('card-div-devolucao').textContent = ultimo.divDevolucao || '0'; 
+        document.getElementById('card-cli-grafica').textContent = ultimo.cliGrafica || '0'; 
+        document.getElementById('card-cli-devolucao').textContent = ultimo.cliDevolucao || '0'; 
+        if (anterior) { 
+            document.getElementById('tend-total-grafica').innerHTML = calcularTendencia(ultimo.totalGrafica, anterior.totalGrafica); 
+            document.getElementById('tend-total-devolucao').innerHTML = calcularTendencia(ultimo.totalDevolucao, anterior.totalDevolucao); 
+        } else { 
+            document.getElementById('tend-total-grafica').innerHTML = ''; 
+            document.getElementById('tend-total-devolucao').innerHTML = ''; 
+        } 
+        document.getElementById('card-dig-total').textContent = somarLinhas(ultimo.digitado); 
+        document.getElementById('card-pend-total').textContent = somarLinhas(ultimo.pendente); 
+        document.getElementById('card-ag-total').textContent = somarLinhas(ultimo.agDia); 
+        document.getElementById('card-prec-total').textContent = somarLinhas(ultimo.precupacao); 
+        document.getElementById('card-dig-detalhes').innerHTML = formatarDetalhes(ultimo.digitado); 
+        document.getElementById('card-pend-detalhes').innerHTML = formatarDetalhes(ultimo.pendente); 
+        document.getElementById('card-ag-detalhes').innerHTML = formatarDetalhes(ultimo.agDia); 
+        document.getElementById('card-prec-detalhes').innerHTML = formatarDetalhes(ultimo.precupacao); 
+        document.getElementById('card-ors-antigas').textContent = ultimo.orsAntigas || '-'; 
+        atualizarGaugePainel(ultimo.slaPercentual || 0); 
+    } 
+    carregarRetrabalhoPainel(); 
+    carregarInventarioPainel(); 
+    carregarExpedicaoPainel(); 
+    carregarQualidadePainel(); 
+    carregarFaleConoscoPainel(); 
+    carregarSeparacaoPainel(); 
+}
+
 function carregarRetrabalhoPainel() { const dadosRetrabalho = JSON.parse(localStorage.getItem('historicoRetrabalho')); const secaoRetrabalho = document.getElementById('secao-retrabalho-painel'); const tabelaPainel = document.getElementById('tabela-retrabalho-painel'); const corpoTabela = document.getElementById('corpo-tabela-retrabalho-painel'); const msgVazia = document.getElementById('msg-vazia-retrabalho'); const dataPainel = document.getElementById('retrabalho-data-painel'); if (!dadosRetrabalho || !dadosRetrabalho.registros || dadosRetrabalho.registros.length === 0) { secaoRetrabalho.style.display = 'none'; return; } secaoRetrabalho.style.display = 'block'; tabelaPainel.style.display = 'table'; msgVazia.style.display = 'none'; dataPainel.textContent = `Última atualização: ${dadosRetrabalho.data}`; corpoTabela.innerHTML = ''; dadosRetrabalho.registros.forEach(item => { corpoTabela.innerHTML += `<tr><td>${item.depositante}</td><td>${item.descricao}</td></tr>`; }); }
 function carregarInventarioPainel() { const dadosInventario = JSON.parse(localStorage.getItem('historicoInventario')); const secaoInventario = document.getElementById('secao-inventario-painel'); const tabelaPainel = document.getElementById('tabela-inventario-painel'); const corpoTabela = document.getElementById('corpo-tabela-inventario-painel'); const msgVazia = document.getElementById('msg-vazia-inventario'); const dataPainel = document.getElementById('inventario-data-painel'); const paletesDiv = document.getElementById('paletes-no-inventario'); const qtdPaletesValor = document.getElementById('qtd-paletes-valor'); if (!dadosInventario || (!dadosInventario.registrosInventario || dadosInventario.registrosInventario.length === 0) && (!dadosInventario.qtdPaletes || dadosInventario.qtdPaletes === '0')) { secaoInventario.style.display = 'none'; return; } secaoInventario.style.display = 'block'; tabelaPainel.style.display = 'table'; msgVazia.style.display = 'none'; dataPainel.textContent = `Última atualização: ${dadosInventario.data}`; if (dadosInventario.registrosInventario && dadosInventario.registrosInventario.length > 0) { corpoTabela.innerHTML = ''; dadosInventario.registrosInventario.forEach(item => { corpoTabela.innerHTML += `<tr><td>${item.depositante}</td><td>${item.tt}</td><td>${item.contado}</td><td>${item.evolucao}</td><td>${item.ila}</td><td>${item.acuracia}</td></tr>`; }); } else { corpoTabela.innerHTML = '<tr><td colspan="6" style="color: #7fb3d5; font-style: italic;">Nenhum registro de inventário</td></tr>'; } if (dadosInventario.qtdPaletes && dadosInventario.qtdPaletes !== '0') { paletesDiv.style.display = 'block'; qtdPaletesValor.textContent = dadosInventario.qtdPaletes; } else { paletesDiv.style.display = 'none'; } }
 function carregarExpedicaoPainel() { const historicoExp = JSON.parse(localStorage.getItem('historicoExpedicao')) || []; const secaoExpedicao = document.getElementById('secao-expedicao-painel'); const dataPainel = document.getElementById('expedicao-data-painel'); const pendenciasDiv = document.getElementById('pendencias-paletes-painel'); const corpoPendencias = document.getElementById('corpo-tabela-pendencias-painel'); if (!historicoExp || historicoExp.length === 0) { secaoExpedicao.style.display = 'none'; return; } secaoExpedicao.style.display = 'block'; const ultimo = historicoExp[0]; const anterior = historicoExp.length > 1 ? historicoExp[1] : null; dataPainel.textContent = `Última atualização: ${ultimo.data}`; document.getElementById('card-exp-volume').textContent = ultimo.volume || '0'; document.getElementById('card-exp-24hs').textContent = ultimo.hs24 || '0'; document.getElementById('card-exp-ontem').textContent = ultimo.ontem || '0'; document.getElementById('card-exp-depositante').textContent = ultimo.depositante || '-'; document.getElementById('card-exp-nota-antiga').textContent = ultimo.notaAntiga || '-'; if (anterior) { document.getElementById('tend-exp-volume').innerHTML = calcularTendenciaExp(ultimo.volume, anterior.volume); document.getElementById('tend-exp-24hs').innerHTML = calcularTendenciaExp(ultimo.hs24, anterior.hs24); document.getElementById('tend-exp-ontem').innerHTML = calcularTendenciaExp(ultimo.ontem, anterior.ontem); } else { document.getElementById('tend-exp-volume').innerHTML = ''; document.getElementById('tend-exp-24hs').innerHTML = ''; document.getElementById('tend-exp-ontem').innerHTML = ''; } if (ultimo.pendenciasPaletes && ultimo.pendenciasPaletes.length > 0) { pendenciasDiv.style.display = 'block'; corpoPendencias.innerHTML = ''; ultimo.pendenciasPaletes.forEach(item => { corpoPendencias.innerHTML += `<tr><td>${item.transportadora}</td><td>${item.paletes}</td></tr>`; }); } else { pendenciasDiv.style.display = 'none'; } if (ultimo.slaPedidos !== undefined) { const slaPedidosValor = ultimo.slaPedidos || 0; const cor = calcularCorSLA(slaPedidosValor); const angulo = calcularAnguloAgulha(slaPedidosValor); const dashArray = calcularDashArray(slaPedidosValor); const status = calcularStatusSLA(slaPedidosValor); document.getElementById('sla-pedidos-arc-fill').setAttribute('stroke', cor); document.getElementById('sla-pedidos-arc-fill').setAttribute('stroke-dasharray', dashArray); document.getElementById('sla-pedidos-agulha-painel').style.transform = `rotate(${angulo}deg)`; document.getElementById('sla-pedidos-valor-painel').textContent = slaPedidosValor.toFixed(2).replace('.', ',') + '%'; document.getElementById('sla-pedidos-valor-painel').style.color = cor; document.getElementById('sla-pedidos-status-painel').textContent = status; document.getElementById('sla-pedidos-status-painel').style.color = cor; } }
@@ -1009,7 +1082,6 @@ function carregarQualidadePainel() { const dadosQualidade = JSON.parse(localStor
 function carregarFaleConoscoPainel() { const dadosFC = JSON.parse(localStorage.getItem('historicoFaleConosco')); const secaoFC = document.getElementById('secao-faleconosco-painel'); const msgVazia = document.getElementById('msg-vazia-faleconosco'); const dataPainel = document.getElementById('faleconosco-data-painel'); const corpoTabelaReclamacoes = document.getElementById('corpo-tabela-reclamacoes-painel'); const graficoContainer = document.getElementById('grafico-reclamacoes'); if (!dadosFC || (!dadosFC.remanacoes || dadosFC.remanacoes.length === 0) && (!dadosFC.reclamacoes || dadosFC.reclamacoes.length === 0)) { secaoFC.style.display = 'none'; return; } secaoFC.style.display = 'block'; msgVazia.style.display = 'none'; dataPainel.textContent = `Última atualização: ${dadosFC.data}`; let totalRemanacoes = 0, totalProcedentes = 0, totalImprocedentes = 0, totalEmAnalise = 0; if (dadosFC.remanacoes && dadosFC.remanacoes.length > 0) { dadosFC.remanacoes.forEach(item => { totalRemanacoes += parseInt(item.qtdeRemanacoes) || 0; totalProcedentes += parseInt(item.procedentes) || 0; totalImprocedentes += parseInt(item.improcedentes) || 0; totalEmAnalise += parseInt(item.emAnalise) || 0; }); } document.getElementById('fc-total-remanacoes').textContent = totalRemanacoes; document.getElementById('fc-total-procedentes').textContent = totalProcedentes; document.getElementById('fc-total-improcedentes').textContent = totalImprocedentes; document.getElementById('fc-total-em-analise').textContent = totalEmAnalise; if (dadosFC.reclamacoes && dadosFC.reclamacoes.length > 0) { corpoTabelaReclamacoes.innerHTML = ''; graficoContainer.innerHTML = ''; let maxTotal = 0; dadosFC.reclamacoes.forEach(item => { const total = (parseInt(item.falta) || 0) + (parseInt(item.inversao) || 0) + (parseInt(item.sobra) || 0) + (parseInt(item.dano) || 0); if (total > maxTotal) maxTotal = total; }); dadosFC.reclamacoes.forEach(item => { const total = (parseInt(item.falta) || 0) + (parseInt(item.inversao) || 0) + (parseInt(item.sobra) || 0) + (parseInt(item.dano) || 0); corpoTabelaReclamacoes.innerHTML += `<tr><td>${item.depositante}</td><td>${item.falta}</td><td>${item.inversao}</td><td>${item.sobra}</td><td>${item.dano}</td><td><strong>${total}</strong></td></tr>`; const larguraBarra = maxTotal > 0 ? (total / maxTotal) * 100 : 0; const barraItem = document.createElement('div'); barraItem.className = 'barra-item'; barraItem.innerHTML = `<div class="barra-label">${item.depositante}</div><div class="barra-container"><div class="barra-fill" style="width: ${larguraBarra}%"><span class="barra-valor">${total}</span></div></div>`; graficoContainer.appendChild(barraItem); }); } else { corpoTabelaReclamacoes.innerHTML = '<tr><td colspan="6" style="color: #7fb3d5; font-style: italic;">Nenhuma reclamação registrada</td></tr>'; graficoContainer.innerHTML = '<p style="color: #7fb3d5; text-align: center; padding: 20px;">Nenhuma reclamação registrada</p>'; } }
 function carregarSeparacaoPainel() { const historicoSep = JSON.parse(localStorage.getItem('historicoSeparacao')) || []; const secaoSeparacao = document.getElementById('secao-separacao-painel'); const dataPainel = document.getElementById('separacao-data-painel'); const carrinhosDiv = document.getElementById('carrinhos-por-depositante-painel'); const corpoCarrinhos = document.getElementById('corpo-tabela-carrinho-painel'); if (!historicoSep || historicoSep.length === 0) { secaoSeparacao.style.display = 'none'; return; } secaoSeparacao.style.display = 'block'; const ultimo = historicoSep[0]; dataPainel.textContent = `Última atualização: ${ultimo.data}`; document.getElementById('card-sep-picking-ondas').textContent = ultimo.pickingOndas || '0'; document.getElementById('card-sep-picking-pecas').textContent = ultimo.pickingPecas || '0'; document.getElementById('card-sep-remanejamento').textContent = ultimo.remanejamento || '0'; document.getElementById('card-sep-pulmao-ondas').textContent = ultimo.pulmaoOndas || '0'; document.getElementById('card-sep-pulmao-pecas').textContent = ultimo.pulmaoPecas || '0'; document.getElementById('card-sep-total-carrinho').textContent = ultimo.totalCarrinho || '0'; if (ultimo.carrinhos && ultimo.carrinhos.length > 0) { carrinhosDiv.style.display = 'block'; corpoCarrinhos.innerHTML = ''; ultimo.carrinhos.forEach(item => { corpoCarrinhos.innerHTML += `<tr><td>${item.qtde}</td><td>${item.depositante}</td></tr>`; }); } else { carrinhosDiv.style.display = 'none'; } }
 function limparPainel() { if (confirm('Tem certeza que deseja apagar todos os registros do painel?')) { localStorage.removeItem('historicoRecebimento'); localStorage.removeItem('historicoRetrabalho'); localStorage.removeItem('historicoInventario'); localStorage.removeItem('historicoExpedicao'); localStorage.removeItem('historicoQualidade'); localStorage.removeItem('historicoFaleConosco'); localStorage.removeItem('historicoSeparacao'); carregarDadosPainel(); } }
- 
 </script>
 </body>
 </html>
